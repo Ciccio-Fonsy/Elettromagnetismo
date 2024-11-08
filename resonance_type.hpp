@@ -8,9 +8,9 @@
 
 class ResonanceType : public ParticleType {
  public:
-  double get_width() const;
+  double get_width() const override;
 
-  void print() const;
+  void print() const override;
 
   bool operator==(const ResonanceType& other) const;
   bool operator!=(const ResonanceType& other) const;

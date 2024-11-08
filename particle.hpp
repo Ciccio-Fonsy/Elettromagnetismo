@@ -12,6 +12,7 @@ class Particle {
   double get_px() const;
   double get_py() const;
   double get_pz() const;
+  char   get_name() const;
   int    get_index() const;
   void   set_index(char name);
   double get_mass() const;
@@ -26,6 +27,9 @@ class Particle {
 
   void printParticle() const;
 
+  int decay2body(Particle& dau1, Particle& dau2) const;
+
+  Particle();
   Particle(char name, double px = 0, double py = 0, double pz = 0);
 
  private:
@@ -39,6 +43,8 @@ class Particle {
   double py_;
   double pz_;
 
+  void boost(double bx, double by, double bz);
+
   static int
       findParticle(char name); // trova il tipo di particella a partire dal suo
                                // nome (serve a settare correttamente l'indice)
@@ -48,6 +54,10 @@ class Particle {
 inline double Particle::get_px() const { return px_; }
 inline double Particle::get_py() const { return py_; }
 inline double Particle::get_pz() const { return pz_; }
+
+inline char Particle::get_name() const {
+  return particle_types_[index_]->get_name();
+}
 
 inline void Particle::set_p(double px, double py, double pz) {
   px_ = px;

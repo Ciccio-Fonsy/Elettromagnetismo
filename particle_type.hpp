@@ -9,11 +9,12 @@ class ParticleType {
   char   get_name() const;
   double get_mass() const;
   int    get_charge() const;
+  virtual double get_width() const { return 0; }
 
   virtual void print() const;
 
-  virtual bool operator==(const ParticleType& other) const;
-  virtual bool operator!=(const ParticleType& other) const;
+  bool operator==(const ParticleType& other) const;
+  bool operator!=(const ParticleType& other) const;
 
   ParticleType(char name, double mass, int charge);
 
