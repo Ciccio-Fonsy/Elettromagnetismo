@@ -155,4 +155,14 @@ void Particle::boost(double bx, double by, double bz) {
   px_ += gamma2 * bp * bx + gamma * bx * energy;
   py_ += gamma2 * bp * by + gamma * by * energy;
   pz_ += gamma2 * bp * bz + gamma * bz * energy;
+
+}
+
+double Particle::invMass(Particle& other) const {
+  double energy = get_energy() + other.get_energy();
+  double px = px_ + other.get_px();
+  double py = py_ + other.get_py();
+  double pz = pz_ + other.get_pz();
+
+  return sqrt(energy * energy - px * px - py * py - pz * pz);
 }
