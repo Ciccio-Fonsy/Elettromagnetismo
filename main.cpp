@@ -30,13 +30,28 @@ int main(){
     int n_particles_event = 100;
     Particle event_particles[n_particles_event+20];
     
-    
+
+    //MASSIMO HA AGGIUNTO SUMW E TFILE  "si dovrebbe mettere così, non so cosa serva, però nel caso aggiustate" 
+
+    TFile*file = Tfile::open("IstogrammiParticelle.root","RECREATE") 
+
+    //secondo Massimo "si dovrebbero cambiare i nomi dei grafici con dei numeri così alla fine si può usare un ciclo for per scrivere i grafici a fine codice e per il metodo sumw :)"
+
+    //range tra 0 e 3, il numero dei bin è , non 60 se no è troopo largo, 180. 
+
     TH1D* h_mass_invariant = new TH1D("h_mass_invariant", "Mass Invariant distribution", 100, 0, 15);
+    h_mass_invariant->Sumw2();
     TH1D* hMassOppositeSign = new TH1D("hMassOppositeSign", "Massa Invariante - Carica Discorre", 100, 0, 2);
+    hMassOppositeSign->Sumw2();
     TH1D* hMassSameSign = new TH1D("hMassSameSign", "Massa Invariante - Carica Concorde", 100, 0, 2);
+    hMassSameSign->Sumw2();
     TH1D* hMassPionKaonOpposite = new TH1D("hMassPionKaonOpposite", "Massa Invariante - Pione+/Kaone- e Pione-/Kaone+", 100, 0, 2);
+    hMassPionKaonOpposite->Sumw2();
     TH1D* hMassPionKaonSame = new TH1D("hMassPionKaonSame", "Massa Invariante - Pione+/Kaone+ e Pione-/Kaone-", 100, 0, 2);
+    hMassPionKaonSame->Sumw2();
     TH1D* hMassKStarDecay = new TH1D("hMassKStarDecay", "Massa Invariante - Decadimento Risonanza K*", 100, 0.7, 1.0);
+    hMassKStarDecay->Sumw2();
+
     TH1D* h_type = new TH1D("h_type", "Particle type distribution", 7, 0, 7);
     TH1D* h_energy = new TH1D("energy", "Energy distribution", 100, 0, 2);
     TH1D* h_theta = new TH1D("theta", "Theta distribution", 100, -M_PI/2, M_PI/2);
@@ -52,7 +67,7 @@ int main(){
     for (int i=0; i <= n_event; ++i)
     {
            int particle_count=0;
-           double mass_inavraint = 0;
+           double mass_invariant = 0;
         
         for(int j=0; j <= n_particles_event; ++j)
         {
@@ -101,8 +116,8 @@ int main(){
             }
         }
 
-        mass_inavraint = std::sqrt(total_energy*total_energy - total_px*total_px - total_py*total_py - total_pz*total_pz);
-        h_mass_invariant->Fill(mass_inavraint);
+        mass_invariant = std::sqrt(total_energy*total_energy - total_px*total_px - total_py*total_py - total_pz*total_pz);
+        h_mass_invariant->Fill(mass_invariant);
         //riempimento istogrammi
 
 
@@ -155,6 +170,10 @@ Particle createRandomParticle()
 
 void fillInstogram(Particle particle[120], TH1D* hMassOppositeSign, TH1D* hMassSameSign, TH1D* hMassPionKaonOpposite, TH1D* hMassPionKaonSame, TH1D* hMassKStarDecay, TH1D* h_type, TH1D* h_energy, TH1D* h_theta, TH1D* h_phi, TH1D* h_pout, TH1D* h_Ptrasv)
 {
+
+
+
+
     for (int i = 0; i < n_particles; ++i) {
         //altri istogtammi credo
         h_type->Fill(particle[i].get_name());
@@ -172,26 +191,49 @@ void fillInstogram(Particle particle[120], TH1D* hMassOppositeSign, TH1D* hMassS
                 double E_sum = particles[i].get_energy() + particles[j].get_energy();
                 double mass_inv = std::sqrt(E_sum * E_sum - px_sum * px_sum - py_sum * py_sum - pz_sum * pz_sum);
 
-//calcio la massa invariante tra le particelle i e j di base e la metto negli istogrammi solo se le part soddisfano le cond
+//calcolo la massa invariante tra le particelle i e j di base e la metto negli istogrammi solo se le parti soddisfano le cond
                 // Istogrammi basati su carica discordante (cariche opposte)
                 if (particles[i].get_charge() * particles[j].get_charge() < 0) {
-                    hDiscordantCharge->Fill(mass_inv);  
+                    hMassOppositeSign->Fill(mass_inv);  
                 }
 
                 // Istogrammi basati su carica concordante (cariche uguali)
-                else if (particles[i].charge * particles[j].charge > 0) {
-                    hConcordantCharge->Fill(mass_inv);;
+                else if (particles[i].get_charge() * particles[j].get_charge() > 0) {
+                    hMassSameSign->Fill(mass_inv);
                 }
-//non modificasti fatti cchet  
+                
+                //FATTI DA MASSIMO, DUNQUE POCO AFFIDABILI(però dai su insomma si spera che siano fatti decentemente non doveva fare molto)
+                
                 // Massa invariante tra particelle di tipo Pion+/Kaon- e Pion-/Kaon+
-                if ((particles[i].type == 0 && particles[j].type == 3) || (particles[i].type == 1 && particles[j].type == 2)) {
-                    hPionKaon1->Fill(mass_inv);
+                else if ((particles[i].type == 0 && particles[j].type == 3) || (particles[i].type == 1 && particles[j].type == 2)) {
+                    hMassPionKaonOpposite->Fill(mass_inv);
                 }
 
                 // Massa invariante tra particelle di tipo Pion+/Kaon+ e Pion-/Kaon-
-                if ((particles[i].type == 0 && particles[j].type == 2) || (particles[i].type == 1 && particles[j].type == 3)) {
-                    hPionKaon2->Fill(mass_inv);
+                else if ((particles[i].type == 0 && particles[j].type == 2) || (particles[i].type == 1 && particles[j].type == 3)) {
+                   hMassPionKaonSame->Fill(mass_inv); 
                 }
+                
+                
+
+
+                /* massa invariante fra le particelle generate in ogni evento che derivano dal decadimento della
+                risonanza K* (quelle in “coda”, per intenderci. N.B. considerate esclusivamente coppie di particelle
+                figlie che provengono dalla stessa “madre”, i.e. non mischiare “figlie” di “madri” diverse, poiché
+                solo nel primo caso si osserverà in questo istogramma il caratteristico picco di massa invariante).
+                Questo istogramma fa da istogramma di benchmark affinché si possa essere certi che la gestione del
+                decadimento, le formule di massa invariante/energia e la virtualizzazione delle classi
+                ParticleType/ResonanceType siano state correttamente implementate. Se tutto è ok in questa fase,
+                dovreste osservare una gaussiana con media la massa della K*, e RMS la larghezza della K*
+                come impostata all’inizio del programma.    */
             }
-        }
+        } 
+    h_mass_invariant->write();
+    hMassOppositeSign->write();
+    hMassSameSign->write();
+    hMassPionKaonOpposite->write();
+    hMassPionKaonSame->write();
+    hMassKStarDecay->write();
+    file->close();
+
 }
