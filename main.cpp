@@ -1,3 +1,4 @@
+
 #include "TH1D.h"
 #include "TRandom3.h"
 
@@ -5,9 +6,14 @@
 #include "particle_type.hpp"
 #include "resonance_type.hpp"
 
+#include <TApplication.h>
+#include <TCanvas.h>
 #include <TFile.h>
 #include <TH1D.h>
+#include <TH1F.h>
 #include <TRandom3.h>
+#include <TStyle.h>
+// #include <TSystem.h>
 
 #include <cmath>
 #include <iostream>
@@ -15,23 +21,39 @@
 
 void     randomParticlePosition(TRandom3* rand, Particle& particle);
 Particle createRandomParticle(TRandom3* rand);
+void     fillInstogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
+                       TH1D* hMassSameSign, TH1D* hMassPionKaonOpposite,
+                       TH1D* hMassPionKaonSame, TH1D* hMassKStarDecay, TH1D* h_type,
+                       TH1D* h_energy, TH1D* h_theta, TH1D* h_phi, TH1D* h_pout,
+                       TH1D* h_Ptrasv, TFile* file, int n_particles);
 
 int main() {
+  // Crea un'applicazione ROOT
+  TApplication theApp("App", 0, 0);
+
+  std::cout << "Creazione del canvas..." << std::endl;
+  TCanvas* canvas = new TCanvas("c1", "Canvas per Istogramma", 800, 600);
+  canvas->Divide(4, 3); // Dividi il canvas in 2 righe e 2 colonne
+  if (canvas == nullptr) {
+    std::cerr << "Errore nella creazione del canvas!" << std::endl;
+    return -1;
+  }
+
   TRandom3 rand;
-  gRandom->SetSeed(); // set seed for random number generator non so se ho
+  rand.SetSeed(0); // set seed for random number generator non so se ho
                       // incluso la classe giusta
-  // name, mass, charge, whidth
+                      // name, mass, charge, whidth
+  Particle::addParticleType('Q', 0.13957, 1);
+  Particle::addParticleType('q', 0.13957, -1);
   Particle::addParticleType('P', 0.93827, 1);
   Particle::addParticleType('p', 0.93827, -1);
   Particle::addParticleType('K', 0.49367, 1);
   Particle::addParticleType('k', 0.49367, -1);
-  Particle::addParticleType('Q', 0.13957, 1);
-  Particle::addParticleType('q', 0.13957, -1);
   Particle::addParticleType('*', 0.89166, 0, 0.050);
 
-  int      n_event           = 1E5;
+  int      n_event           = 1000;
   int      n_particles_event = 100;
-  Particle event_particles[n_particles_event + 20];
+  Particle event_particles[120];
 
   // MASSIMO HA AGGIUNTO SUMW E TFILE  "si dovrebbe mettere così, non so cosa
   // serva, però nel caso aggiustate"
@@ -69,8 +91,7 @@ int main() {
 
   TH1D* h_type   = new TH1D("h_type", "Particle type distribution", 7, 0, 7);
   TH1D* h_energy = new TH1D("energy", "Energy distribution", 100, 0, 2);
-  TH1D* h_theta =
-      new TH1D("theta", "Theta distribution", 100, -M_PI / 2, M_PI / 2);
+  TH1D* h_theta  = new TH1D("theta", "Theta distribution", 100, 0, M_PI);
   TH1D* h_phi    = new TH1D("phi", "Phi distribution", 100, 0, 2 * M_PI);
   TH1D* h_pout   = new TH1D("pout", "Pout distribution", 100, 0, 1);
   TH1D* h_Ptrasv = new TH1D("Ptrasve", "Ptrasv distribution", 100, 0, 1);
@@ -80,11 +101,12 @@ int main() {
   double total_py     = 0;
   double total_pz     = 0;
 
-  for (int i = 0; i <= n_event; ++i) {
+  std::cout << "Generazione delle istanze..." << std::endl;
+  for (int i = 0; i < n_event; ++i) {
     int    particle_count = 0;
     double mass_invariant = 0;
 
-    for (int j = 0; j <= n_particles_event; ++j) {
+    for (int j = 0; j < n_particles_event; ++j) {
       Particle new_particle = createRandomParticle(&rand);
 
       if (new_particle.get_name() == '*') {
@@ -138,18 +160,78 @@ int main() {
                                - total_py * total_py - total_pz * total_pz);
     hMassInvariant->Fill(mass_invariant);
     // riempimento istogrammi
+    fillInstogram(event_particles, hMassOppositeSign, hMassSameSign,
+                  hMassPionKaonOpposite, hMassPionKaonSame, hMassKStarDecay,
+                  h_type, h_energy, h_theta, h_phi, h_pout, h_Ptrasv, file,
+                  n_particles_event);
   }
 
   double mass_invariant =
       std::sqrt(total_energy * total_energy - total_px * total_px
                 - total_py * total_py - total_pz * total_pz);
 
+  std::cout << "Disegno dei grafici..." << std::endl;
+
+  // Disegna su pannello 1: hMassInvariant
+  canvas->cd(1); // Seleziona il pannello 1
+  hMassInvariant->Draw("APE");
+
+  // Disegna su pannello 2: hMassOppositeSign
+  canvas->cd(2); // Seleziona il pannello 2
+  hMassOppositeSign->Draw("APE");
+
+  // Disegna su pannello 3: hMassSameSign
+  canvas->cd(3); // Seleziona il pannello 3
+  hMassSameSign->Draw("APE");
+
+  // Disegna su pannello 4: hMassPionKaonOpposite
+  canvas->cd(4); // Seleziona il pannello 4
+  hMassPionKaonOpposite->Draw("APE");
+
+  // Disegna su pannello 5: hMassPionKaonSame
+  canvas->cd(5); // Seleziona il pannello 5
+  hMassPionKaonSame->Draw("APE");
+
+  // Disegna su pannello 6: hMassKStarDecay
+  canvas->cd(6); // Seleziona il pannello 6
+  hMassKStarDecay->Draw("APE");
+
+  // Disegna su pannello 7: h_type
+  canvas->cd(7); // Seleziona il pannello 7
+  h_type->Draw("APE");
+
+  // Disegna su pannello 8: h_energy
+  canvas->cd(8); // Seleziona il pannello 8
+  h_energy->Draw("APE");
+
+  // Disegna su pannello 9: h_theta
+  canvas->cd(9); // Seleziona il pannello 9
+  h_theta->Draw("APE");
+
+  // Disegna su pannello 10: h_phi
+  canvas->cd(10); // Seleziona il pannello 10
+  h_phi->Draw("APE");
+
+  // Disegna su pannello 11: h_pout
+  canvas->cd(11); // Seleziona il pannello 11
+  h_pout->Draw("APE");
+
+  // Disegna su pannello 12: h_Ptrasv
+  canvas->cd(12); // Seleziona il pannello 12
+  h_Ptrasv->Draw("APE");
+
+  canvas->Update(); // Aggiorna il canvas per visualizzare i grafici
+
+  // Mantieni la finestra ROOT aperta
+  theApp.Run();
+
+  gApplication->Run();
   return 0;
 }
 
 void randomParticlePosition(TRandom3* rand, Particle& particle) {
   double phi   = rand->Uniform(0, 2 * M_PI);
-  double theta = rand->Uniform(-M_PI / 2, M_PI / 2);
+  double theta = rand->Uniform(0, M_PI);
   double pout  = rand->Exp(1);
   double px    = pout * std::sin(theta) * std::cos(phi);
   double py    = pout * std::sin(theta) * std::sin(phi);
@@ -171,8 +253,6 @@ Particle createRandomParticle(TRandom3* rand) {
     name = 'k';
   } else if (c < 189) {
     name = 'P';
-
-    
   } else if (c < 198) {
     name = 'p';
   } else {
@@ -191,7 +271,7 @@ void fillInstogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
                    TH1D* h_Ptrasv, TFile* file, int n_particles) {
   for (int i = 0; i < n_particles; ++i) {
     // altri istogtammi credo
-    h_type->Fill(particle[i].get_name());
+    h_type->Fill(particle[i].get_index());
     h_energy->Fill(particle[i].get_energy());
     h_theta->Fill(
         std::acos(particle[i].get_pz()
@@ -231,9 +311,8 @@ void fillInstogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
       // che siano fatti decentemente non doveva fare molto)
 
       // Massa invariante tra particelle di tipo Pion+/Kaon- e Pion-/Kaon+
-      else if ((particle[i].get_name() == 'Q' && particle[j].get_name() == 'k')
-               || (particle[i].get_name() == 'q'
-                   && particle[j].get_name() == 'K')) {
+      if ((particle[i].get_name() == 'Q' && particle[j].get_name() == 'k')
+          || (particle[i].get_name() == 'q' && particle[j].get_name() == 'K')) {
         hMassPionKaonOpposite->Fill(mass_inv);
       }
 
@@ -263,7 +342,7 @@ void fillInstogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
   hMassPionKaonOpposite->Write();
   hMassPionKaonSame->Write();
   hMassKStarDecay->Write();
-  file->Close();
+  // file->Close();
 }
 
 // g++ main.cpp $(root-config --cflags --libs) -o main
