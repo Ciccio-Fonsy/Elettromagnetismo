@@ -3,20 +3,21 @@
 #include "particle_type.hpp"
 #include "resonance_type.hpp"
 
+#include <cmath>   // for M_PI
+#include <cstdlib> //for RAND_MAX
 #include <iostream>
 #include <stdexcept>
-#include <cmath>  // for M_PI
-#include <cstdlib> //for RAND_MAX
 
 std::array<ParticleType*, Particle::max_n_particle_type_>
     Particle::particle_types_  = {nullptr, nullptr, nullptr, nullptr,
                                   nullptr, nullptr, nullptr};
 int Particle::n_particle_type_ = 0;
 
-
-Particle::Particle() 
-  : index_(-1), px_(0.0), py_(0.0), pz_(0.0) {
-}
+Particle::Particle()
+    : index_(-1)
+    , px_(0.0)
+    , py_(0.0)
+    , pz_(0.0) {}
 
 Particle::Particle(char name, double px, double py, double pz)
     : px_(px)
@@ -147,22 +148,12 @@ int Particle::decay2body(Particle& dau1, Particle& dau2) const {
 
 void Particle::boost(double bx, double by, double bz) {
   double energy = get_energy();
-  double b2 = bx * bx + by * by + bz * bz;
-  double gamma = 1.0 / sqrt(1.0 - b2);
-  double bp = bx * px_ + by * py_ + bz * pz_;
+  double b2     = bx * bx + by * by + bz * bz;
+  double gamma  = 1.0 / sqrt(1.0 - b2);
+  double bp     = bx * px_ + by * py_ + bz * pz_;
   double gamma2 = b2 > 0 ? (gamma - 1.0) / b2 : 0.0;
 
   px_ += gamma2 * bp * bx + gamma * bx * energy;
   py_ += gamma2 * bp * by + gamma * by * energy;
   pz_ += gamma2 * bp * bz + gamma * bz * energy;
-
-}
-
-double Particle::invMass(Particle& other) const {
-  double energy = get_energy() + other.get_energy();
-  double px = px_ + other.get_px();
-  double py = py_ + other.get_py();
-  double pz = pz_ + other.get_pz();
-
-  return sqrt(energy * energy - px * px - py * py - pz * pz);
 }

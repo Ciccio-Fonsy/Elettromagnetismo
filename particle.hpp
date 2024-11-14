@@ -16,6 +16,7 @@ class Particle {
   int    get_index() const;
   void   set_index(char name);
   double get_mass() const;
+  int    get_charge() const;
   double get_energy() const;
   void   set_p(double px, double py, double pz);
 
@@ -73,6 +74,10 @@ inline void Particle::set_index(char name) {
 
 inline double Particle::get_mass() const {
   return particle_types_[index_]->get_mass();
+}
+
+inline int Particle::get_charge() const {
+  return particle_types_[index_]->get_charge();
 }
 
 inline double Particle::get_energy() const {
