@@ -145,6 +145,9 @@ void analyze_histograms() {
   hMassInvariantSub12->GetYaxis()->SetTitle("Eventi");
   hMassInvariantSub12->Draw("APE");
 
+  /*  h->Draw("E");
+  h->Draw("HIST,SAME");*/
+
   canvas->Update();
   canvas->Draw();
 
