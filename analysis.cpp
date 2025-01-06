@@ -125,6 +125,20 @@ void analyze_histograms() {
   }
   std::cout << '\n';
 
+  
+//sottraggo gli istogrammi delle masse invarianti con carica opposta e stessa carica
+    TH1F* hMassInvariantSub = (TH1F*)hMassOppositeSign->Clone("hMassInvariantSub");
+    hMassInvariantSub->Add(hMassOppositeSign, hMassSameSign, 1, -1);
+    hMassInvariantSub->SetLineColor(kRed);
+    hMassInvariantSub->SetMarkerColor(kRed);
+    hMassInvariantSub->SetMarkerStyle(20);
+    hMassInvariantSub->SetMarkerSize(0.5);
+    hMassInvariantSub->SetStats(0);
+    hMassInvariantSub->SetTitle("Massa invariante con carica opposta - stessa carica");
+    hMassInvariantSub->GetXaxis()->SetTitle("Massa invariante [GeV/c^{2}]");
+    hMassInvariantSub->GetYaxis()->SetTitle("Eventi");
+    hMassInvariantSub->Draw("E1");
+    hMassInvariant->Draw("SAME");
   // Chiusura del file
   file->Close();
 }
