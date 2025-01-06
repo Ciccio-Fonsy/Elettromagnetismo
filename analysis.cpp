@@ -77,11 +77,11 @@ void analyze_histograms() {
 
   if (f_uniform) {
     std::cout << "Parametri del fit uniforme:" << std::endl;
-    std::cout << "  Costante: " << f_uniform->GetParameter(0) << " +/- "
+    std::cout << "  Costante:\t" << f_uniform->GetParameter(0) << " +/- "
               << f_uniform->GetParError(0) << std::endl;
-    std::cout << "  Chi2/NDF: "
+    std::cout << "  Chi2/NDF:\t"
               << f_uniform->GetChisquare() / f_uniform->GetNDF() << std::endl;
-    std::cout << "  Probabilità: " << f_uniform->GetProb() << std::endl;
+    std::cout << "  Probabilità:\t" << f_uniform->GetProb() << std::endl;
   } else {
     std::cerr << "Errore nel recupero della funzione di fit." << std::endl;
   }
@@ -94,14 +94,14 @@ void analyze_histograms() {
 
   if (f_exponential) {
     std::cout << "Parametri del fit esponenziale:" << std::endl;
-    std::cout << "  Costante: " << f_exponential->GetParameter(0) << " +/- "
+    std::cout << "  Costante:\t" << f_exponential->GetParameter(0) << " +/- "
               << f_exponential->GetParError(0) << std::endl;
-    std::cout << "  Slope: " << f_exponential->GetParameter(1) << " +/- "
+    std::cout << "  Slope:\t" << f_exponential->GetParameter(1) << " +/- "
               << f_exponential->GetParError(1) << std::endl;
-    std::cout << "  Chi2/NDF: "
+    std::cout << "  Chi2/NDF:\t"
               << f_exponential->GetChisquare() / f_exponential->GetNDF()
               << std::endl;
-    std::cout << "  Probabilità: " << f_exponential->GetProb() << std::endl;
+    std::cout << "  Probabilità:\t" << f_exponential->GetProb() << std::endl;
   } else {
     std::cerr << "Errore nel recupero della funzione di fit." << std::endl;
   }
