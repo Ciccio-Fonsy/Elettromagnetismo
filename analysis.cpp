@@ -132,14 +132,26 @@ void analyze_histograms() {
 
   // sottraggo gli istogrammi delle masse invarianti con carica opposta e stessa
   // carica
-  TH1F* hMassInvariantSub12 = new TH1F(
-      "hMassInvariantSub12",
+  TH1F* hMassInvariantSub1 = new TH1F(
+      "hMassInvariantSub1",
       "Massa invariante con carica opposta - stessa carica", 300, 0, 6);
-  hMassInvariantSub12->Add(hMassSameSign, 1);
-  hMassInvariantSub12->Add(hMassOppositeSign, -1);
-  hMassInvariantSub12->GetXaxis()->SetTitle("Massa invariante [GeV/c^{2}]");
-  hMassInvariantSub12->GetYaxis()->SetTitle("Eventi");
-  hMassInvariantSub12->Draw("HIST");
+  hMassInvariantSub1->Add(hMassSameSign, 1);
+  hMassInvariantSub1->Add(hMassOppositeSign, -1);
+  hMassInvariantSub1->GetXaxis()->SetTitle("Massa invariante [GeV/c^{2}]");
+  hMassInvariantSub1->GetYaxis()->SetTitle("Eventi");
+  hMassInvariantSub1->SetLineColor(kGreen);
+  hMassInvariantSub1->Draw("APE");
+  TH1F* hMassInvariantSub2 = new TH1F(
+      "hMassInvariantSub2",
+      "Massa invariante con carica opposta - stessa carica per pioni e kaoni",
+      300, 0, 6);
+  hMassInvariantSub2->Add(hMassPionKaonOpposite, 1);
+  hMassInvariantSub2->Add(hMassPionKaonSame, -1);
+  hMassInvariantSub2->GetXaxis()->SetTitle("Massa invariante [GeV/c^{2}]");
+  hMassInvariantSub2->GetYaxis()->SetTitle("Eventi");
+  hMassInvariantSub2->SetLineColor(kRed);
+  hMassInvariantSub2->Draw("SAME,APE");
+  hMassKStarDecay->Draw("SAME,APE");
 
   canvas->Update();
 
