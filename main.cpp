@@ -26,6 +26,8 @@ void     fillInstogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
                        TH1D* hMassPionKaonSame, TH1D* hMassKStarDecay, TH1D* h_type,
                        TH1D* h_energy, TH1D* h_theta, TH1D* h_phi, TH1D* h_pout,
                        TH1D* h_Ptrasv, TFile* file, int n_particles);
+void     saveHistograms(const std::vector<TH1D*>& histograms,
+                        const std::string&        filename);
 
 int main() {
   // Crea un'applicazione ROOT
@@ -41,8 +43,8 @@ int main() {
 
   TRandom3 rand;
   rand.SetSeed(0); // set seed for random number generator non so se ho
-                      // incluso la classe giusta
-                      // name, mass, charge, whidth
+                   // incluso la classe giusta
+                   // name, mass, charge, whidth
   Particle::addParticleType('Q', 0.13957, 1);
   Particle::addParticleType('q', 0.13957, -1);
   Particle::addParticleType('P', 0.93827, 1);
@@ -68,33 +70,33 @@ int main() {
   // 180.
 
   TH1D* hMassInvariant =
-      new TH1D("hMassInvariant", "Mass Invariant distribution", 100, 0, 15);
+      new TH1D("hMassInvariant", "Mass Invariant distribution", 100, 0, 100001);
   hMassInvariant->Sumw2();
   TH1D* hMassOppositeSign = new TH1D(
-      "hMassOppositeSign", "Massa Invariante - Carica Discorre", 100, 0, 2);
+      "hMassOppositeSign", "Massa Invariante - Carica Discorde", 300, 0, 6);
   hMassOppositeSign->Sumw2();
   TH1D* hMassSameSign = new TH1D(
-      "hMassSameSign", "Massa Invariante - Carica Concorde", 100, 0, 2);
+      "hMassSameSign", "Massa Invariante - Carica Concorde", 300, 0, 6);
   hMassSameSign->Sumw2();
   TH1D* hMassPionKaonOpposite =
       new TH1D("hMassPionKaonOpposite",
-               "Massa Invariante - Pione+/Kaone- e Pione-/Kaone+", 100, 0, 2);
+               "Massa Invariante - Pione+/Kaone- e Pione-/Kaone+", 300, 0, 6);
   hMassPionKaonOpposite->Sumw2();
   TH1D* hMassPionKaonSame =
       new TH1D("hMassPionKaonSame",
-               "Massa Invariante - Pione+/Kaone+ e Pione-/Kaone-", 100, 0, 2);
+               "Massa Invariante - Pione+/Kaone+ e Pione-/Kaone-", 300, 0, 6);
   hMassPionKaonSame->Sumw2();
   TH1D* hMassKStarDecay =
       new TH1D("hMassKStarDecay", "Massa Invariante - Decadimento Risonanza K*",
-               100, 0.7, 1.0);
+               100, 0.7, 1.05);
   hMassKStarDecay->Sumw2();
 
   TH1D* h_type   = new TH1D("h_type", "Particle type distribution", 7, 0, 7);
-  TH1D* h_energy = new TH1D("energy", "Energy distribution", 100, 0, 2);
+  TH1D* h_energy = new TH1D("energy", "Energy distribution", 300, 0, 6);
   TH1D* h_theta  = new TH1D("theta", "Theta distribution", 100, 0, M_PI);
-  TH1D* h_phi    = new TH1D("phi", "Phi distribution", 100, 0, 2 * M_PI);
-  TH1D* h_pout   = new TH1D("pout", "Pout distribution", 100, 0, 1);
-  TH1D* h_Ptrasv = new TH1D("Ptrasve", "Ptrasv distribution", 100, 0, 1);
+  TH1D* h_phi    = new TH1D("phi", "Phi distribution", 100, 0, M_PI * 2);
+  TH1D* h_pout   = new TH1D("pout", "Pout distribution", 200, 0, 6);
+  TH1D* h_Ptrasv = new TH1D("Ptrasve", "Ptrasv distribution", 200, 0, 6);
 
   double total_energy = 0;
   double total_px     = 0;
@@ -165,6 +167,23 @@ int main() {
                   h_type, h_energy, h_theta, h_phi, h_pout, h_Ptrasv, file,
                   n_particles_event);
   }
+
+  // Collect all histograms into a vector
+  std::vector<TH1D*> histograms = {hMassInvariant,
+                                   hMassOppositeSign,
+                                   hMassSameSign,
+                                   hMassPionKaonOpposite,
+                                   hMassPionKaonSame,
+                                   hMassKStarDecay,
+                                   h_type,
+                                   h_energy,
+                                   h_theta,
+                                   h_phi,
+                                   h_pout,
+                                   h_Ptrasv};
+
+  // Save histograms to a file
+  saveHistograms(histograms, "IstogrammiParticelle.root");
 
   double mass_invariant =
       std::sqrt(total_energy * total_energy - total_px * total_px
@@ -271,14 +290,20 @@ void fillInstogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
                    TH1D* h_Ptrasv, TFile* file, int n_particles) {
   for (int i = 0; i < n_particles; ++i) {
     // altri istogtammi credo
+    double x = particle[i].get_px();
+    double y = particle[i].get_py();
+    double z = particle[i].get_pz();
+
     h_type->Fill(particle[i].get_index());
     h_energy->Fill(particle[i].get_energy());
-    h_theta->Fill(
-        std::acos(particle[i].get_pz()
-                  / std::sqrt(particle[i].get_px() * particle[i].get_px()
-                              + particle[i].get_py() * particle[i].get_py()
-                              + particle[i].get_pz() * particle[i].get_pz())));
-    h_phi->Fill(std::atan(particle[i].get_py() / particle[i].get_px()));
+    h_theta->Fill(std::acos(z / std::sqrt(x * x + y * y + z * z)));
+
+    double phi = std::atan2(y, x);
+    if (phi < 0) {
+      phi += 2 * M_PI; // Convert the range from [-pi, pi] to [0, 2*pi]
+    }
+
+    h_phi->Fill(phi);
     h_pout->Fill(std::sqrt(particle[i].get_px() * particle[i].get_px()
                            + particle[i].get_py() * particle[i].get_py()
                            + particle[i].get_pz() * particle[i].get_pz()));
@@ -343,6 +368,25 @@ void fillInstogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
   hMassPionKaonSame->Write();
   hMassKStarDecay->Write();
   // file->Close();
+}
+
+void saveHistograms(const std::vector<TH1D*>& histograms,
+                    const std::string&        filename) {
+  // Create a new TFile object to write the histograms
+  TFile file(filename.c_str(), "RECREATE");
+  if (!file.IsOpen()) {
+    std::cerr << "Error: Could not open file " << filename << " for writing."
+              << std::endl;
+    return;
+  }
+
+  // Loop over the histograms and write each to the file
+  for (auto hist : histograms) {
+    if (hist) { hist->Write(); }
+  }
+
+  // Close the file
+  file.Close();
 }
 
 // g++ main.cpp $(root-config --cflags --libs) -o main
