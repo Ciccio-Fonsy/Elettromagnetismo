@@ -54,18 +54,22 @@ void analyze_histograms() {
 
   // Numero di ingressi
   for (auto h : h_vector) {
-    std::cout << "Numero di ingressi in " << h->GetName() << ": "
+    std::cout << "Numero di ingressi in " << h->GetName() << ":\t"
               << h->GetEntries() << std::endl;
   }
   // verifico distibuzione particelle
+  int n_particles = 0;
   for (int i = 1; i <= h_type->GetNbinsX(); i++) {
     std::cout << "Contenuto del bin " << i << ": "
               << h_type->GetBinContent(i) << " +/- "
-              << h_type->GetBinError(i) << std::endl;
+              << h_type->GetBinError(i) 
+              << "\tPrecntuale: "<< h_type->GetBinContent(i)/h_type->GetEntries()*100 << "%"  << std::endl;
+    n_particles += h_type->GetBinContent(i);
   }
+    std::cout << "Numero totale di particelle: " << n_particles << std::endl;
 
   // Fit della distribuzione angolare con una funzione uniforme
-  h_phi->Fit("pol0", "Q"); // "pol0" è una funzione predefinita per un fit costante
+  h_phi->Fit("pol0"); // "pol0" è una funzione predefinita per un fit costante
   TF1* f_uniform = h_phi->GetFunction("pol0");
 
   if (f_uniform) {
@@ -81,7 +85,7 @@ void analyze_histograms() {
 
   // Fit della distribuzione del modulo dell'impulso con una funzione
   // esponenziale
-  h_pout->Fit("expo", "Q");
+  h_pout->Fit("expo");
   TF1* f_exponential = h_pout->GetFunction("expo");
 
   if (f_exponential) {
