@@ -135,7 +135,8 @@ void analyze_histograms() {
   TH1F* hMassInvariantSub12 = new TH1F(
       "hMassInvariantSub12",
       "Massa invariante con carica opposta - stessa carica", 300, 0, 6);
-  hMassInvariantSub12->Add(hMassSameSign, hMassOppositeSign, 1, -1);
+  hMassInvariantSub12->Add(hMassSameSign, 1);
+  hMassInvariantSub12->Add(hMassOppositeSign, -1);
   hMassInvariantSub12->GetXaxis()->SetTitle("Massa invariante [GeV/c^{2}]");
   hMassInvariantSub12->GetYaxis()->SetTitle("Eventi");
   hMassInvariantSub12->Draw("HIST");
