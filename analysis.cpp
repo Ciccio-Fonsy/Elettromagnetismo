@@ -42,22 +42,34 @@ void analyze_histograms() {
     std::cout << "Numero di ingressi in h_mass_invariant: " << hMassInvariant->GetEntries() << std::endl;
 
     // Fit della distribuzione angolare con una funzione uniforme
-    TF1 *f_uniform = new TF1("f_uniform", "[0]", 0, 2 * M_PI);
-    h_phi->Fit("f_uniform");
+  h_phi->Fit("pol0"); // "pol0" è una funzione predefinita per un fit costante
+  TF1* f_uniform = h_phi->GetFunction("pol0");
+
+  if (f_uniform) {
     f_uniform->Print();
+    std::cout << "Chi2/NDF per il fit uniforme: "
+              << f_uniform->GetChisquare() / f_uniform->GetNDF() << std::endl;
+    std::cout << "Probabilità del fit uniforme: " << f_uniform->GetProb()
+              << std::endl;
+  } else {
+    std::cerr << "Errore nel recupero della funzione di fit." << std::endl;
+  }
 
-    // Fit della distribuzione del modulo dell'impulso con una funzione esponenziale
-    TF1 *f_exponential = new TF1("f_exponential", "[0]*exp(-[1]*x)", 0, 10);
-    h_pout->Fit("f_exponential");
+  // Fit della distribuzione del modulo dell'impulso con una funzione
+  // esponenziale
+  h_pout->Fit("expo");
+  TF1* f_exponential = h_pout->GetFunction("expo");
+
+  if (f_exponential) {
     f_exponential->Print();
+    std::cout << "Chi2/NDF per il fit esponenziale: "
+              << f_exponential->GetChisquare() / f_exponential->GetNDF() << std::endl;
+    std::cout << "Probabilità del fit esponenziale: " << f_exponential->GetProb()
+              << std::endl;
+  } else {
+    std::cerr << "Errore nel recupero della funzione di fit." << std::endl;
+  }
 
-    // Chi-quadro e probabilità del fit
-    std::cout << "Chi2/NDF per il fit uniforme: " << f_uniform->GetChisquare() / f_uniform->GetNDF() << std::endl;
-    std::cout << "Probabilità del fit uniforme: " << f_uniform->GetProb() << std::endl;
-
-    std::cout << "Chi2/NDF per il fit esponenziale: " << f_exponential->GetChisquare() / f_exponential->GetNDF() << std::endl;
-    std::cout << "Probabilità del fit esponenziale: " << f_exponential->GetProb() << std::endl;
-
-    // Chiusura del file
-    file->Close();
+  // Chiusura del file
+  file->Close();
 }
