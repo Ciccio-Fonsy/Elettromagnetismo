@@ -132,20 +132,18 @@ void analyze_histograms() {
 
   // sottraggo gli istogrammi delle masse invarianti con carica opposta e stessa
   // carica
-  TH1F* hMassInvariantSub =
-      (TH1F*)hMassOppositeSign->Clone("hMassInvariantSub");
-  hMassInvariantSub->Add(hMassOppositeSign, hMassSameSign, 1, -1);
-  hMassInvariantSub->SetLineColor(kRed);
-  hMassInvariantSub->SetMarkerColor(kRed);
-  hMassInvariantSub->SetMarkerStyle(20);
-  hMassInvariantSub->SetMarkerSize(0.5);
-  hMassInvariantSub->SetStats(0);
-  hMassInvariantSub->SetTitle(
+  TH1F *hMassInvariantSub12 =new TH1F(*hMassOppositeSign);
+  hMassInvariantSub12->Add(hMassSameSign, hMassOppositeSign, 1, -1);
+  hMassInvariantSub12->SetLineColor(kRed);
+  hMassInvariantSub12->SetMarkerColor(kRed);
+  hMassInvariantSub12->SetMarkerStyle(20);
+  hMassInvariantSub12->SetMarkerSize(0.5);
+  hMassInvariantSub12->SetStats(0);
+  hMassInvariantSub12->SetTitle(
       "Massa invariante con carica opposta - stessa carica");
-  hMassInvariantSub->GetXaxis()->SetTitle("Massa invariante [GeV/c^{2}]");
-  hMassInvariantSub->GetYaxis()->SetTitle("Eventi");
-  hMassInvariantSub->Draw("E1");
-  hMassInvariant->Draw("SAME");
+  hMassInvariantSub12->GetXaxis()->SetTitle("Massa invariante [GeV/c^{2}]");
+  hMassInvariantSub12->GetYaxis()->SetTitle("Eventi");
+  hMassInvariantSub12->Draw("APE");
 
   canvas->Update();
   canvas->Draw();
