@@ -6,7 +6,7 @@
 
 void analyze_histograms() {
     // Apri il file ROOT
-    TFile *file = TFile::Open("histograms.root");
+    TFile *file = TFile::Open("IstogrammiParticelle.root");
     
     if (!file || file->IsZombie()) {
         std::cerr << "Errore nell'apertura del file ROOT." << std::endl;
@@ -16,9 +16,9 @@ void analyze_histograms() {
     // Caricamento degli istogrammi
     TH1F *h_phi = (TH1F*)file->Get("h_phi");
     TH1F *h_momentum = (TH1F*)file->Get("h_momentum");
-    TH1F *h_mass_invariant = (TH1F*)file->Get("h_mass_invariant");
+    TH1F *hMassInvariant = (TH1F*)file->Get("hMassInvariant");
 
-    if (!h_phi || !h_momentum || !h_mass_invariant) {
+    if (!h_phi || !h_momentum || !hMassInvariant) {
         std::cerr << "Errore nel caricamento degli istogrammi." << std::endl;
         file->Close();
         return;
@@ -27,7 +27,7 @@ void analyze_histograms() {
     // Numero di ingressi
     std::cout << "Numero di ingressi in h_phi: " << h_phi->GetEntries() << std::endl;
     std::cout << "Numero di ingressi in h_momentum: " << h_momentum->GetEntries() << std::endl;
-    std::cout << "Numero di ingressi in h_mass_invariant: " << h_mass_invariant->GetEntries() << std::endl;
+    std::cout << "Numero di ingressi in h_mass_invariant: " << hMassInvariant->GetEntries() << std::endl;
 
     // Fit della distribuzione angolare con una funzione uniforme
     TF1 *f_uniform = new TF1("f_uniform", "[0]", 0, 2 * M_PI);
