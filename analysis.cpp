@@ -15,10 +15,10 @@ void analyze_histograms() {
 
     // Caricamento degli istogrammi
     TH1F *h_phi = (TH1F*)file->Get("h_phi");
-    TH1F *h_momentum = (TH1F*)file->Get("h_momentum");
+    TH1F *h_pout = (TH1F*)file->Get("h_pout");
     TH1F *hMassInvariant = (TH1F*)file->Get("hMassInvariant");
 
-    if (!h_phi || !h_momentum || !hMassInvariant) {
+    if (!h_phi || !h_pout || !hMassInvariant) {
         std::cerr << "Errore nel caricamento degli istogrammi." << std::endl;
         file->Close();
         return;
@@ -26,7 +26,7 @@ void analyze_histograms() {
 
     // Numero di ingressi
     std::cout << "Numero di ingressi in h_phi: " << h_phi->GetEntries() << std::endl;
-    std::cout << "Numero di ingressi in h_momentum: " << h_momentum->GetEntries() << std::endl;
+    std::cout << "Numero di ingressi in h_pout: " << h_pout->GetEntries() << std::endl;
     std::cout << "Numero di ingressi in h_mass_invariant: " << hMassInvariant->GetEntries() << std::endl;
 
     // Fit della distribuzione angolare con una funzione uniforme
@@ -36,7 +36,7 @@ void analyze_histograms() {
 
     // Fit della distribuzione del modulo dell'impulso con una funzione esponenziale
     TF1 *f_exponential = new TF1("f_exponential", "[0]*exp(-[1]*x)", 0, 10);
-    h_momentum->Fit("f_exponential");
+    h_pout->Fit("f_exponential");
     f_exponential->Print();
 
     // Chi-quadro e probabilità del fit
