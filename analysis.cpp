@@ -65,7 +65,7 @@ void analyze_histograms() {
   }
 
   // Fit della distribuzione angolare con una funzione uniforme
-  h_phi->Fit("pol0"); // "pol0" è una funzione predefinita per un fit costante
+  h_phi->Fit("pol0", "Q"); // "pol0" è una funzione predefinita per un fit costante
   TF1* f_uniform = h_phi->GetFunction("pol0");
 
   if (f_uniform) {
@@ -81,7 +81,7 @@ void analyze_histograms() {
 
   // Fit della distribuzione del modulo dell'impulso con una funzione
   // esponenziale
-  h_pout->Fit("expo");
+  h_pout->Fit("expo", "Q");
   TF1* f_exponential = h_pout->GetFunction("expo");
 
   if (f_exponential) {
