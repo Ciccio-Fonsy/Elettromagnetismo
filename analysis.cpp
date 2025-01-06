@@ -103,3 +103,5 @@ void analyze_histograms() {
 }
 
 int main() { analyze_histograms(); }
+
+//g++ analysis.cpp $(root-config --cflags --libs) -o analysis
