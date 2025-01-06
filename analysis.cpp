@@ -1,3 +1,4 @@
+
 #include "analysis.hpp"
 
 #include <TF1.h>
@@ -63,25 +64,42 @@ void analyze_histograms() {
   // verifico distibuzione particelle
   for (int i = 1; i <= h_type->GetNbinsX(); i++) {
     std::cout << "Contenuto del bin " << i << ": " << h_type->GetBinContent(i)
-              << "\t+/- " << h_type->GetBinError(i) << "\tPrecntuale: "
+              << " +/- " << h_type->GetBinError(i) << "\tPrecntuale: "
               << h_type->GetBinContent(i) / h_type->GetEntries() * 100
-              << "\t+/- " << h_type->GetBinError(i) / h_type->GetEntries() * 100
+              << " +/- " << h_type->GetBinError(i) / h_type->GetEntries() * 100
               << "%" << std::endl;
   }
   std::cout << '\n';
 
   // Fit della distribuzione angolare con una funzione uniforme
-  h_phi->Fit("pol0",
-             "Q"); // "pol0" è una funzione predefinita per un fit costante
-  TF1* f_uniform = h_phi->GetFunction("pol0");
+  h_phi->Fit("pol0", "Q", "", 0, 2 * M_PI);
+  TF1* f_uniform_phi = h_phi->GetFunction("pol0");
 
-  if (f_uniform) {
-    std::cout << "Parametri del fit uniforme:" << std::endl;
-    std::cout << "  Costante:\t" << f_uniform->GetParameter(0) << " +/- "
-              << f_uniform->GetParError(0) << std::endl;
+  if (f_uniform_phi) {
+    std::cout << "Parametri del fit uniforme di phi:" << std::endl;
+    std::cout << "  Costante:\t" << f_uniform_phi->GetParameter(0) << " +/- "
+              << f_uniform_phi->GetParError(0) << std::endl;
     std::cout << "  Chi2/NDF:\t"
-              << f_uniform->GetChisquare() / f_uniform->GetNDF() << std::endl;
-    std::cout << "  Probabilità:\t" << f_uniform->GetProb() << std::endl;
+              << f_uniform_phi->GetChisquare() / f_uniform_phi->GetNDF()
+              << std::endl;
+    std::cout << "  Probabilità:\t" << f_uniform_phi->GetProb() << std::endl;
+  } else {
+    std::cerr << "Errore nel recupero della funzione di fit." << std::endl;
+  }
+  std::cout << '\n';
+
+  // Fit della distribuzione angolare con una funzione uniforme
+  h_theta->Fit("pol0", "Q", "", 0, M_PI);
+  TF1* f_uniform_theta = h_theta->GetFunction("pol0");
+
+  if (f_uniform_theta) {
+    std::cout << "Parametri del fit uniforme di theta:" << std::endl;
+    std::cout << "  Costante:\t" << f_uniform_theta->GetParameter(0) << " +/- "
+              << f_uniform_theta->GetParError(0) << std::endl;
+    std::cout << "  Chi2/NDF:\t"
+              << f_uniform_theta->GetChisquare() / f_uniform_theta->GetNDF()
+              << std::endl;
+    std::cout << "  Probabilità:\t" << f_uniform_theta->GetProb() << std::endl;
   } else {
     std::cerr << "Errore nel recupero della funzione di fit." << std::endl;
   }
