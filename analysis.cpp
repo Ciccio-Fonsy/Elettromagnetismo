@@ -1,6 +1,8 @@
 
 #include "analysis.hpp"
 
+#include <TApplication.h>
+#include <TCanvas.h>
 #include <TF1.h>
 #include <TFile.h>
 #include <TH1F.h>
@@ -9,8 +11,9 @@
 #include <iostream>
 
 void analyze_histograms() {
+  TApplication theApp("App", 0, 0);
   // Apri il file ROOT
-  TFile* file = TFile::Open("IstogrammiParticelle.root");
+  TFile*       file = TFile::Open("IstogrammiParticelle.root");
 
   if (!file || file->IsZombie()) {
     std::cerr << "Errore nell'apertura del file ROOT." << std::endl;
@@ -125,22 +128,32 @@ void analyze_histograms() {
   }
   std::cout << '\n';
 
-  
-//sottraggo gli istogrammi delle masse invarianti con carica opposta e stessa carica
-    TH1F* hMassInvariantSub = (TH1F*)hMassOppositeSign->Clone("hMassInvariantSub");
-    hMassInvariantSub->Add(hMassOppositeSign, hMassSameSign, 1, -1);
-    hMassInvariantSub->SetLineColor(kRed);
-    hMassInvariantSub->SetMarkerColor(kRed);
-    hMassInvariantSub->SetMarkerStyle(20);
-    hMassInvariantSub->SetMarkerSize(0.5);
-    hMassInvariantSub->SetStats(0);
-    hMassInvariantSub->SetTitle("Massa invariante con carica opposta - stessa carica");
-    hMassInvariantSub->GetXaxis()->SetTitle("Massa invariante [GeV/c^{2}]");
-    hMassInvariantSub->GetYaxis()->SetTitle("Eventi");
-    hMassInvariantSub->Draw("E1");
-    hMassInvariant->Draw("SAME");
+  TCanvas* canvas = new TCanvas("c1", "Canvas per Istogramma", 800, 600);
+
+  // sottraggo gli istogrammi delle masse invarianti con carica opposta e stessa
+  // carica
+  TH1F* hMassInvariantSub =
+      (TH1F*)hMassOppositeSign->Clone("hMassInvariantSub");
+  hMassInvariantSub->Add(hMassOppositeSign, hMassSameSign, 1, -1);
+  hMassInvariantSub->SetLineColor(kRed);
+  hMassInvariantSub->SetMarkerColor(kRed);
+  hMassInvariantSub->SetMarkerStyle(20);
+  hMassInvariantSub->SetMarkerSize(0.5);
+  hMassInvariantSub->SetStats(0);
+  hMassInvariantSub->SetTitle(
+      "Massa invariante con carica opposta - stessa carica");
+  hMassInvariantSub->GetXaxis()->SetTitle("Massa invariante [GeV/c^{2}]");
+  hMassInvariantSub->GetYaxis()->SetTitle("Eventi");
+  hMassInvariantSub->Draw("E1");
+  hMassInvariant->Draw("SAME");
+
+  canvas->Update();
+  canvas->Draw();
+
   // Chiusura del file
   file->Close();
+  theApp.Run();
+  gApplication->Run();
 }
 
 int main() { analyze_histograms(); }
