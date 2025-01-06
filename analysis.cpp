@@ -63,9 +63,10 @@ void analyze_histograms() {
   // verifico distibuzione particelle
   for (int i = 1; i <= h_type->GetNbinsX(); i++) {
     std::cout << "Contenuto del bin " << i << ": " << h_type->GetBinContent(i)
-              << " +/- " << h_type->GetBinError(i) << "\tPrecntuale: "
-              << h_type->GetBinContent(i) / h_type->GetEntries() * 100 << "%"
-              << std::endl;
+              << "\t+/- " << h_type->GetBinError(i) << "\tPrecntuale: "
+              << h_type->GetBinContent(i) / h_type->GetEntries() * 100
+              << "\t+/- " << h_type->GetBinError(i) / h_type->GetEntries() * 100
+              << "%" << std::endl;
   }
   std::cout << '\n';
 
