@@ -60,8 +60,8 @@ void analyze_histograms() {
   // verifico distibuzione particelle
   for (int i = 1; i <= h_type->GetNbinsX(); i++) {
     std::cout << "Contenuto del bin " << i << ": "
-              << h_type->GetBinContent(i - 1) << " +/- "
-              << h_type->GetBinError(i - 1) << std::endl;
+              << h_type->GetBinContent(i) << " +/- "
+              << h_type->GetBinError(i) << std::endl;
   }
 
   // Fit della distribuzione angolare con una funzione uniforme
