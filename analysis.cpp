@@ -13,7 +13,9 @@
 void analyze_histograms() {
   TApplication theApp("App", 0, 0);
   // Apri il file ROOT
-  TFile*       file = TFile::Open("IstogrammiParticelle.root");
+  TCanvas*     canvas = new TCanvas("c1", "Canvas per Istogramma", 800, 600);
+
+  TFile* file = TFile::Open("IstogrammiParticelle.root");
 
   if (!file || file->IsZombie()) {
     std::cerr << "Errore nell'apertura del file ROOT." << std::endl;
@@ -128,33 +130,21 @@ void analyze_histograms() {
   }
   std::cout << '\n';
 
-  TCanvas* canvas = new TCanvas("c1", "Canvas per Istogramma", 800, 600);
-
   // sottraggo gli istogrammi delle masse invarianti con carica opposta e stessa
   // carica
-  TH1F *hMassInvariantSub12 =new TH1F(*hMassOppositeSign);
+  TH1F* hMassInvariantSub12 = new TH1F(
+      "hMassInvariantSub12",
+      "Massa invariante con carica opposta - stessa carica", 300, 0, 6);
   hMassInvariantSub12->Add(hMassSameSign, hMassOppositeSign, 1, -1);
-  hMassInvariantSub12->SetLineColor(kRed);
-  hMassInvariantSub12->SetMarkerColor(kRed);
-  hMassInvariantSub12->SetMarkerStyle(20);
-  hMassInvariantSub12->SetMarkerSize(0.5);
-  hMassInvariantSub12->SetStats(0);
-  hMassInvariantSub12->SetTitle(
-      "Massa invariante con carica opposta - stessa carica");
   hMassInvariantSub12->GetXaxis()->SetTitle("Massa invariante [GeV/c^{2}]");
   hMassInvariantSub12->GetYaxis()->SetTitle("Eventi");
-  hMassInvariantSub12->Draw("APE");
-
-  /*  h->Draw("E");
-  h->Draw("HIST,SAME");*/
+  hMassInvariantSub12->Draw("HIST");
 
   canvas->Update();
-  canvas->Draw();
 
   // Chiusura del file
   file->Close();
   theApp.Run();
-  gApplication->Run();
 }
 
 int main() { analyze_histograms(); }
