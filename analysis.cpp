@@ -142,8 +142,6 @@ void analyze_histograms() {
 
   canvas->Update();
 
-  // Chiusura del file
-  file->Close();
   theApp.Run();
 }
 
