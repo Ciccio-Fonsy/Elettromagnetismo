@@ -25,9 +25,9 @@ void     randomParticlePosition(TRandom3* rand, Particle& particle);
 Particle createRandomParticle(TRandom3* rand);
 void     fillInstogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
                        TH1D* hMassSameSign, TH1D* hMassPionKaonOpposite,
-                       TH1D* hMassPionKaonSame, TH1D* hMassKStarDecay, TH1D* h_type,
-                       TH1D* h_energy, TH1D* h_theta, TH1D* h_phi, TH1D* h_pout,
-                       TH1D* h_Ptrasv, int n_particles);
+                       TH1D* hMassPionKaonSame, TH1D* hMassKStarDecay, TH1D* hType,
+                       TH1D* hEnergy, TH1D* aTheta, TH1D* hPhi, TH1D* hPout,
+                       TH1D* hPtrasv, int n_particles);
 void     saveHistograms(const std::array<TH1D*, 12>& histograms,
                         const std::string&           filename);
 
@@ -84,12 +84,12 @@ int main() {
                100, 0.7, 1.05);
   hMassKStarDecay->Sumw2();
 
-  TH1D* h_type   = new TH1D("h_type", "Particle type distribution", 7, 0, 7);
-  TH1D* h_energy = new TH1D("h_energy", "Energy distribution", 300, 0, 6);
-  TH1D* h_theta  = new TH1D("h_theta", "Theta distribution", 100, 0, M_PI);
-  TH1D* h_phi    = new TH1D("h_phi", "Phi distribution", 100, 0, M_PI * 2);
-  TH1D* h_pout   = new TH1D("h_pout", "Pout distribution", 200, 0, 6);
-  TH1D* h_Ptrasv = new TH1D("h_Ptrasv", "Ptrasv distribution", 200, 0, 6);
+  TH1D* hType   = new TH1D("hType", "Particle type distribution", 7, 0, 7);
+  TH1D* hEnergy = new TH1D("hEnergy", "Energy distribution", 300, 0, 6);
+  TH1D* aTheta  = new TH1D("aTheta", "Theta distribution", 100, 0, M_PI);
+  TH1D* hPhi    = new TH1D("hPhi", "Phi distribution", 100, 0, M_PI * 2);
+  TH1D* hPout   = new TH1D("hPout", "Pout distribution", 200, 0, 6);
+  TH1D* hPtrasv = new TH1D("hPtrasv", "Ptrasv distribution", 200, 0, 6);
 
   double total_energy = 0;
   double total_px     = 0;
@@ -157,7 +157,7 @@ int main() {
     // riempimento istogrammi
     fillInstogram(event_particles, hMassOppositeSign, hMassSameSign,
                   hMassPionKaonOpposite, hMassPionKaonSame, hMassKStarDecay,
-                  h_type, h_energy, h_theta, h_phi, h_pout, h_Ptrasv,
+                  hType, hEnergy, aTheta, hPhi, hPout, hPtrasv,
                   n_particles_event);
   }
 
@@ -168,12 +168,12 @@ int main() {
                                       hMassPionKaonOpposite,
                                       hMassPionKaonSame,
                                       hMassKStarDecay,
-                                      h_type,
-                                      h_energy,
-                                      h_theta,
-                                      h_phi,
-                                      h_pout,
-                                      h_Ptrasv};
+                                      hType,
+                                      hEnergy,
+                                      aTheta,
+                                      hPhi,
+                                      hPout,
+                                      hPtrasv};
 
   // Save histograms to a file
   saveHistograms(histograms, "IstogrammiParticelle.root");
@@ -236,29 +236,29 @@ Particle createRandomParticle(TRandom3* rand) {
 
 void fillInstogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
                    TH1D* hMassSameSign, TH1D* hMassPionKaonOpposite,
-                   TH1D* hMassPionKaonSame, TH1D* hMassKStarDecay, TH1D* h_type,
-                   TH1D* h_energy, TH1D* h_theta, TH1D* h_phi, TH1D* h_pout,
-                   TH1D* h_Ptrasv, int n_particles) {
+                   TH1D* hMassPionKaonSame, TH1D* hMassKStarDecay, TH1D* hType,
+                   TH1D* hEnergy, TH1D* aTheta, TH1D* hPhi, TH1D* hPout,
+                   TH1D* hPtrasv, int n_particles) {
   for (int i = 0; i < n_particles; ++i) {
     // altri istogtammi credo
     double x = particle[i].get_px();
     double y = particle[i].get_py();
     double z = particle[i].get_pz();
 
-    h_type->Fill(particle[i].get_index());
-    h_energy->Fill(particle[i].get_energy());
-    h_theta->Fill(std::acos(z / std::sqrt(x * x + y * y + z * z)));
+    hType->Fill(particle[i].get_index());
+    hEnergy->Fill(particle[i].get_energy());
+    aTheta->Fill(std::acos(z / std::sqrt(x * x + y * y + z * z)));
 
     double phi = std::atan2(y, x);
     if (phi < 0) {
       phi += 2 * M_PI; // Convert the range from [-pi, pi] to [0, 2*pi]
     }
 
-    h_phi->Fill(phi);
-    h_pout->Fill(std::sqrt(particle[i].get_px() * particle[i].get_px()
+    hPhi->Fill(phi);
+    hPout->Fill(std::sqrt(particle[i].get_px() * particle[i].get_px()
                            + particle[i].get_py() * particle[i].get_py()
                            + particle[i].get_pz() * particle[i].get_pz()));
-    h_Ptrasv->Fill(std::sqrt(particle[i].get_px() * particle[i].get_px()
+    hPtrasv->Fill(std::sqrt(particle[i].get_px() * particle[i].get_px()
                              + particle[i].get_py() * particle[i].get_py()));
 
     for (int j = i + 1; j < n_particles; ++j) {

@@ -31,16 +31,16 @@ int main() {
   TH1F* hMassPionKaonOpposite = (TH1F*)file->Get("hMassPionKaonOpposite");
   TH1F* hMassPionKaonSame     = (TH1F*)file->Get("hMassPionKaonSame");
   TH1F* hMassKStarDecay       = (TH1F*)file->Get("hMassKStarDecay");
-  TH1F* h_type                = (TH1F*)file->Get("h_type");
-  TH1F* h_energy              = (TH1F*)file->Get("h_energy");
-  TH1F* h_theta               = (TH1F*)file->Get("h_theta");
-  TH1F* h_phi                 = (TH1F*)file->Get("h_phi");
-  TH1F* h_pout                = (TH1F*)file->Get("h_pout");
-  TH1F* h_Ptrasv              = (TH1F*)file->Get("h_Ptrasv");
+  TH1F* hType                 = (TH1F*)file->Get("hType");
+  TH1F* hEnergy               = (TH1F*)file->Get("hEnergy");
+  TH1F* hTheta                = (TH1F*)file->Get("hTheta");
+  TH1F* hPhi                  = (TH1F*)file->Get("hPhi");
+  TH1F* hPout                 = (TH1F*)file->Get("hPout");
+  TH1F* hPtrasv               = (TH1F*)file->Get("hPtrasv");
 
   if (!hMassInvariant || !hMassOppositeSign || !hMassSameSign
       || !hMassPionKaonOpposite || !hMassPionKaonSame || !hMassKStarDecay
-      || !h_type || !h_energy || !h_theta || !h_phi || !h_pout || !h_Ptrasv) {
+      || !hType || !hEnergy || !hTheta || !hPhi || !hPout || !hPtrasv) {
     std::cerr << "Errore nel caricamento degli istogrammi." << std::endl;
     file->Close();
     return 2;
@@ -54,12 +54,12 @@ int main() {
   h_vector.push_back(hMassPionKaonOpposite);
   h_vector.push_back(hMassPionKaonSame);
   h_vector.push_back(hMassKStarDecay);
-  h_vector.push_back(h_type);
-  h_vector.push_back(h_energy);
-  h_vector.push_back(h_theta);
-  h_vector.push_back(h_phi);
-  h_vector.push_back(h_pout);
-  h_vector.push_back(h_Ptrasv);
+  h_vector.push_back(hType);
+  h_vector.push_back(hEnergy);
+  h_vector.push_back(hTheta);
+  h_vector.push_back(hPhi);
+  h_vector.push_back(hPout);
+  h_vector.push_back(hPtrasv);
 
   // Numero di ingressi
   for (auto h : h_vector) {
@@ -69,18 +69,18 @@ int main() {
   std::cout << '\n';
 
   // verifico distibuzione particelle
-  for (int i = 1; i <= h_type->GetNbinsX(); i++) {
-    std::cout << "Contenuto del bin " << i << ": " << h_type->GetBinContent(i)
-              << " +/- " << h_type->GetBinError(i) << "\tPrecntuale: "
-              << h_type->GetBinContent(i) / h_type->GetEntries() * 100
-              << " +/- " << h_type->GetBinError(i) / h_type->GetEntries() * 100
-              << "%" << std::endl;
+  for (int i = 1; i <= hType->GetNbinsX(); i++) {
+    std::cout << "Contenuto del bin " << i << ": " << hType->GetBinContent(i)
+              << " +/- " << hType->GetBinError(i) << "\tPrecntuale: "
+              << hType->GetBinContent(i) / hType->GetEntries() * 100 << " +/- "
+              << hType->GetBinError(i) / hType->GetEntries() * 100 << "%"
+              << std::endl;
   }
   std::cout << '\n';
 
   // Fit della distribuzione angolare con una funzione uniforme
-  h_phi->Fit("pol0", "Q", "", 0, 2 * M_PI);
-  TF1* f_uniform_phi = h_phi->GetFunction("pol0");
+  hPhi->Fit("pol0", "Q", "", 0, 2 * M_PI);
+  TF1* f_uniform_phi = hPhi->GetFunction("pol0");
 
   if (f_uniform_phi) {
     std::cout << "Parametri del fit uniforme di phi:" << std::endl;
@@ -96,8 +96,8 @@ int main() {
   std::cout << '\n';
 
   // Fit della distribuzione angolare con una funzione uniforme
-  h_theta->Fit("pol0", "Q", "", 0, M_PI);
-  TF1* f_uniform_theta = h_theta->GetFunction("pol0");
+  hTheta->Fit("pol0", "Q", "", 0, M_PI);
+  TF1* f_uniform_theta = hTheta->GetFunction("pol0");
 
   if (f_uniform_theta) {
     std::cout << "Parametri del fit uniforme di theta:" << std::endl;
@@ -114,8 +114,8 @@ int main() {
 
   // Fit della distribuzione del modulo dell'impulso con una funzione
   // esponenziale
-  h_pout->Fit("expo", "Q");
-  TF1* f_exponential = h_pout->GetFunction("expo");
+  hPout->Fit("expo", "Q");
+  TF1* f_exponential = hPout->GetFunction("expo");
 
   if (f_exponential) {
     std::cout << "Parametri del fit esponenziale:" << std::endl;
