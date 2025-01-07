@@ -13,6 +13,8 @@
 #include <TH1F.h>
 #include <TRandom3.h>
 #include <TStyle.h>
+#include <TSystem.h>
+#include <TROOT.h>
 // #include <TSystem.h>
 
 #include <cmath>
@@ -25,21 +27,17 @@ void     fillInstogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
                        TH1D* hMassSameSign, TH1D* hMassPionKaonOpposite,
                        TH1D* hMassPionKaonSame, TH1D* hMassKStarDecay, TH1D* h_type,
                        TH1D* h_energy, TH1D* h_theta, TH1D* h_phi, TH1D* h_pout,
-                       TH1D* h_Ptrasv, TFile* file, int n_particles);
-void     saveHistograms(const std::vector<TH1D*>& histograms,
-                        const std::string&        filename);
+                       TH1D* h_Ptrasv, int n_particles);
+void     saveHistograms(const std::array<TH1D*, 12>& histograms,
+                        const std::string&           filename);
 
 int main() {
   // Crea un'applicazione ROOT
-  TApplication theApp("App", 0, 0);
+  TApplication theApp("App", nullptr, nullptr);
 
   std::cout << "Creazione del canvas..." << std::endl;
   TCanvas* canvas = new TCanvas("c1", "Canvas per Istogramma", 800, 600);
   canvas->Divide(4, 3); // Dividi il canvas in 2 righe e 2 colonne
-  if (canvas == nullptr) {
-    std::cerr << "Errore nella creazione del canvas!" << std::endl;
-    return -1;
-  }
 
   TRandom3 rand;
   rand.SetSeed(0); // set seed for random number generator non so se ho
@@ -56,11 +54,6 @@ int main() {
   int      n_event           = 1000;
   int      n_particles_event = 100;
   Particle event_particles[120];
-
-  // MASSIMO HA AGGIUNTO SUMW E TFILE  "si dovrebbe mettere così, non so cosa
-  // serva, però nel caso aggiustate"
-
-  TFile* file = new TFile("IstogrammiParticelle.root", "RECREATE");
 
   // secondo Massimo "si dovrebbero cambiare i nomi dei grafici con dei
   // numeri così alla fine si può usare un ciclo for per scrivere i grafici
@@ -164,87 +157,45 @@ int main() {
     // riempimento istogrammi
     fillInstogram(event_particles, hMassOppositeSign, hMassSameSign,
                   hMassPionKaonOpposite, hMassPionKaonSame, hMassKStarDecay,
-                  h_type, h_energy, h_theta, h_phi, h_pout, h_Ptrasv, file,
+                  h_type, h_energy, h_theta, h_phi, h_pout, h_Ptrasv,
                   n_particles_event);
   }
 
   // Collect all histograms into a vector
-  std::vector<TH1D*> histograms = {hMassInvariant,
-                                   hMassOppositeSign,
-                                   hMassSameSign,
-                                   hMassPionKaonOpposite,
-                                   hMassPionKaonSame,
-                                   hMassKStarDecay,
-                                   h_type,
-                                   h_energy,
-                                   h_theta,
-                                   h_phi,
-                                   h_pout,
-                                   h_Ptrasv};
+  std::array<TH1D*, 12> histograms = {hMassInvariant,
+                                      hMassOppositeSign,
+                                      hMassSameSign,
+                                      hMassPionKaonOpposite,
+                                      hMassPionKaonSame,
+                                      hMassKStarDecay,
+                                      h_type,
+                                      h_energy,
+                                      h_theta,
+                                      h_phi,
+                                      h_pout,
+                                      h_Ptrasv};
 
   // Save histograms to a file
   saveHistograms(histograms, "IstogrammiParticelle.root");
 
-  double mass_invariant =
-      std::sqrt(total_energy * total_energy - total_px * total_px
-                - total_py * total_py - total_pz * total_pz);
-
   std::cout << "Disegno dei grafici..." << std::endl;
 
-  // Disegna su pannello 1: hMassInvariant
-  canvas->cd(1); // Seleziona il pannello 1
-  hMassInvariant->Draw("APE");
-
-  // Disegna su pannello 2: hMassOppositeSign
-  canvas->cd(2); // Seleziona il pannello 2
-  hMassOppositeSign->Draw("APE");
-
-  // Disegna su pannello 3: hMassSameSign
-  canvas->cd(3); // Seleziona il pannello 3
-  hMassSameSign->Draw("APE");
-
-  // Disegna su pannello 4: hMassPionKaonOpposite
-  canvas->cd(4); // Seleziona il pannello 4
-  hMassPionKaonOpposite->Draw("APE");
-
-  // Disegna su pannello 5: hMassPionKaonSame
-  canvas->cd(5); // Seleziona il pannello 5
-  hMassPionKaonSame->Draw("APE");
-
-  // Disegna su pannello 6: hMassKStarDecay
-  canvas->cd(6); // Seleziona il pannello 6
-  hMassKStarDecay->Draw("APE");
-
-  // Disegna su pannello 7: h_type
-  canvas->cd(7); // Seleziona il pannello 7
-  h_type->Draw("APE");
-
-  // Disegna su pannello 8: h_energy
-  canvas->cd(8); // Seleziona il pannello 8
-  h_energy->Draw("APE");
-
-  // Disegna su pannello 9: h_theta
-  canvas->cd(9); // Seleziona il pannello 9
-  h_theta->Draw("APE");
-
-  // Disegna su pannello 10: h_phi
-  canvas->cd(10); // Seleziona il pannello 10
-  h_phi->Draw("APE");
-
-  // Disegna su pannello 11: h_pout
-  canvas->cd(11); // Seleziona il pannello 11
-  h_pout->Draw("APE");
-
-  // Disegna su pannello 12: h_Ptrasv
-  canvas->cd(12); // Seleziona il pannello 12
-  h_Ptrasv->Draw("APE");
+  for (int i = 0; i < 12; ++i) {
+    canvas->cd(i + 1); // Seleziona il pannello 1
+    histograms[i]->Draw("APE");
+  }
 
   canvas->Update(); // Aggiorna il canvas per visualizzare i grafici
 
-  // Mantieni la finestra ROOT aperta
-  theApp.Run();
+  // Start the ROOT application event loop, but check periodically if the canvas
+  // is closed
+  while (gROOT->GetListOfCanvases()->FindObject("c1")) {
+    gSystem->ProcessEvents(); // Process any events (including canvas events)
+    gSystem->Sleep(100);      // Add a small delay to prevent 100% CPU usage
+  }
 
-  gApplication->Run();
+  std::cout << "Canvas closed. Exiting program." << std::endl;
+
   return 0;
 }
 
@@ -287,7 +238,7 @@ void fillInstogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
                    TH1D* hMassSameSign, TH1D* hMassPionKaonOpposite,
                    TH1D* hMassPionKaonSame, TH1D* hMassKStarDecay, TH1D* h_type,
                    TH1D* h_energy, TH1D* h_theta, TH1D* h_phi, TH1D* h_pout,
-                   TH1D* h_Ptrasv, TFile* file, int n_particles) {
+                   TH1D* h_Ptrasv, int n_particles) {
   for (int i = 0; i < n_particles; ++i) {
     // altri istogtammi credo
     double x = particle[i].get_px();
@@ -355,16 +306,10 @@ void fillInstogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
       impostata all’inizio del programma.    */
     }
   }
-  hMassOppositeSign->Write();
-  hMassSameSign->Write();
-  hMassPionKaonOpposite->Write();
-  hMassPionKaonSame->Write();
-  hMassKStarDecay->Write();
-  // file->Close();
 }
 
-void saveHistograms(const std::vector<TH1D*>& histograms,
-                    const std::string&        filename) {
+void saveHistograms(const std::array<TH1D*, 12>& histograms,
+                    const std::string&           filename) {
   // Create a new TFile object to write the histograms
   TFile file(filename.c_str(), "RECREATE");
   if (!file.IsOpen()) {
@@ -381,5 +326,4 @@ void saveHistograms(const std::vector<TH1D*>& histograms,
   // Close the file
   file.Close();
 }
-
 // g++ main.cpp $(root-config --cflags --libs) -o main

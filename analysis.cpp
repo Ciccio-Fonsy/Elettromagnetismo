@@ -6,11 +6,13 @@
 #include <TF1.h>
 #include <TFile.h>
 #include <TH1F.h>
+#include <TROOT.h>
 #include <TStyle.h>
+#include <TSystem.h>
 
 #include <iostream>
 
-void analyze_histograms() {
+int main() {
   TApplication theApp("App", 0, 0);
   // Apri il file ROOT
   TCanvas*     canvas = new TCanvas("c1", "Canvas per Istogramma", 800, 600);
@@ -19,7 +21,7 @@ void analyze_histograms() {
 
   if (!file || file->IsZombie()) {
     std::cerr << "Errore nell'apertura del file ROOT." << std::endl;
-    return;
+    return 1;
   }
 
   // Caricamento degli istogrammi
@@ -41,7 +43,7 @@ void analyze_histograms() {
       || !h_type || !h_energy || !h_theta || !h_phi || !h_pout || !h_Ptrasv) {
     std::cerr << "Errore nel caricamento degli istogrammi." << std::endl;
     file->Close();
-    return;
+    return 2;
   }
 
   // costruisco un vettore di istogrammi
@@ -155,7 +157,12 @@ void analyze_histograms() {
 
   canvas->Update();
 
-  theApp.Run();
-}
+  while (gROOT->GetListOfCanvases()->FindObject("c1")) {
+    gSystem->ProcessEvents(); // Process any events (including canvas events)
+    gSystem->Sleep(100);      // Add a small delay to prevent 100% CPU usage
+  }
 
-int main() { analyze_histograms(); }
+  std::cout << "Canvas closed. Exiting program." << std::endl;
+
+  return 0;
+}
