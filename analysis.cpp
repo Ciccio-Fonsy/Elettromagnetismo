@@ -25,18 +25,18 @@ int main() {
   }
 
   // Caricamento degli istogrammi
-  TH1F* hMassInvariant        = (TH1F*)file->Get("hMassInvariant");
-  TH1F* hMassOppositeSign     = (TH1F*)file->Get("hMassOppositeSign");
-  TH1F* hMassSameSign         = (TH1F*)file->Get("hMassSameSign");
-  TH1F* hMassPionKaonOpposite = (TH1F*)file->Get("hMassPionKaonOpposite");
-  TH1F* hMassPionKaonSame     = (TH1F*)file->Get("hMassPionKaonSame");
-  TH1F* hMassKStarDecay       = (TH1F*)file->Get("hMassKStarDecay");
-  TH1F* hType                 = (TH1F*)file->Get("hType");
-  TH1F* hEnergy               = (TH1F*)file->Get("hEnergy");
-  TH1F* hTheta                = (TH1F*)file->Get("hTheta");
-  TH1F* hPhi                  = (TH1F*)file->Get("hPhi");
-  TH1F* hPout                 = (TH1F*)file->Get("hPout");
-  TH1F* hPtrasv               = (TH1F*)file->Get("hPtrasv");
+  TH1D* hMassInvariant        = (TH1D*)file->Get("hMassInvariant");
+  TH1D* hMassSameSign         = (TH1D*)file->Get("hMassSameSign");
+  TH1D* hMassOppositeSign     = (TH1D*)file->Get("hMassOppositeSign");
+  TH1D* hMassPionKaonOpposite = (TH1D*)file->Get("hMassPionKaonOpposite");
+  TH1D* hMassPionKaonSame     = (TH1D*)file->Get("hMassPionKaonSame");
+  TH1D* hMassKStarDecay       = (TH1D*)file->Get("hMassKStarDecay");
+  TH1D* hType                 = (TH1D*)file->Get("hType");
+  TH1D* hEnergy               = (TH1D*)file->Get("hEnergy");
+  TH1D* hTheta                = (TH1D*)file->Get("hTheta");
+  TH1D* hPhi                  = (TH1D*)file->Get("hPhi");
+  TH1D* hPout                 = (TH1D*)file->Get("hPout");
+  TH1D* hPtrasv               = (TH1D*)file->Get("hPtrasv");
 
   if (!hMassInvariant || !hMassOppositeSign || !hMassSameSign
       || !hMassPionKaonOpposite || !hMassPionKaonSame || !hMassKStarDecay
@@ -47,22 +47,21 @@ int main() {
   }
 
   // costruisco un vettore di istogrammi
-  std::vector<TH1F*> h_vector;
-  h_vector.push_back(hMassInvariant);
-  h_vector.push_back(hMassOppositeSign);
-  h_vector.push_back(hMassSameSign);
-  h_vector.push_back(hMassPionKaonOpposite);
-  h_vector.push_back(hMassPionKaonSame);
-  h_vector.push_back(hMassKStarDecay);
-  h_vector.push_back(hType);
-  h_vector.push_back(hEnergy);
-  h_vector.push_back(hTheta);
-  h_vector.push_back(hPhi);
-  h_vector.push_back(hPout);
-  h_vector.push_back(hPtrasv);
+  std::array<TH1D*, 12> h_array = {hMassInvariant,
+                                   hMassOppositeSign,
+                                   hMassSameSign,
+                                   hMassPionKaonOpposite,
+                                   hMassPionKaonSame,
+                                   hMassKStarDecay,
+                                   hType,
+                                   hEnergy,
+                                   hTheta,
+                                   hPhi,
+                                   hPout,
+                                   hPtrasv};
 
   // Numero di ingressi
-  for (auto h : h_vector) {
+  for (auto h : h_array) {
     std::cout << "Numero di ingressi in " << h->GetName() << ": "
               << h->GetEntries() << std::endl;
   }
