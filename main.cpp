@@ -23,7 +23,7 @@
 
 void     randomParticlePosition(TRandom3* rand, Particle& particle);
 Particle createRandomParticle(TRandom3* rand);
-void     fillInstogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
+void     fillHistogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
                        TH1D* hMassSameSign, TH1D* hMassPionKaonOpposite,
                        TH1D* hMassPionKaonSame, TH1D* hMassKStarDecay, TH1D* hType,
                        TH1D* hEnergy, TH1D* hTheta, TH1D* hPhi, TH1D* hPout,
@@ -155,7 +155,7 @@ int main() {
                                - total_py * total_py - total_pz * total_pz);
     hMassInvariant->Fill(mass_invariant);
     // riempimento istogrammi
-    fillInstogram(event_particles, hMassOppositeSign, hMassSameSign,
+    fillHistogram(event_particles, hMassOppositeSign, hMassSameSign,
                   hMassPionKaonOpposite, hMassPionKaonSame, hMassKStarDecay,
                   hType, hEnergy, hTheta, hPhi, hPout, hPtrasv,
                   n_particles_event);
@@ -234,7 +234,7 @@ Particle createRandomParticle(TRandom3* rand) {
   return particle;
 }
 
-void fillInstogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
+void fillHistogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
                    TH1D* hMassSameSign, TH1D* hMassPionKaonOpposite,
                    TH1D* hMassPionKaonSame, TH1D* hMassKStarDecay, TH1D* hType,
                    TH1D* hEnergy, TH1D* hTheta, TH1D* hPhi, TH1D* hPout,
