@@ -92,11 +92,11 @@ int main() {
   hMassKStarDecay->Sumw2();
 
   TH1D* h_type   = new TH1D("h_type", "Particle type distribution", 7, 0, 7);
-  TH1D* h_energy = new TH1D("energy", "Energy distribution", 300, 0, 6);
-  TH1D* h_theta  = new TH1D("theta", "Theta distribution", 100, 0, M_PI);
-  TH1D* h_phi    = new TH1D("phi", "Phi distribution", 100, 0, M_PI * 2);
-  TH1D* h_pout   = new TH1D("pout", "Pout distribution", 200, 0, 6);
-  TH1D* h_Ptrasv = new TH1D("Ptrasve", "Ptrasv distribution", 200, 0, 6);
+  TH1D* h_energy = new TH1D("h_energy", "Energy distribution", 300, 0, 6);
+  TH1D* h_theta  = new TH1D("h_theta", "Theta distribution", 100, 0, M_PI);
+  TH1D* h_phi    = new TH1D("h_phi", "Phi distribution", 100, 0, M_PI * 2);
+  TH1D* h_pout   = new TH1D("h_pout", "Pout distribution", 200, 0, 6);
+  TH1D* h_Ptrasv = new TH1D("h_Ptrasv", "Ptrasv distribution", 200, 0, 6);
 
   double total_energy = 0;
   double total_px     = 0;
@@ -311,14 +311,7 @@ void fillInstogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
                              + particle[i].get_py() * particle[i].get_py()));
 
     for (int j = i + 1; j < n_particles; ++j) {
-      // Calcola la massa invariante tra particella i e particella
-      // j(assoulutamente inutile)
-      double px_sum   = particle[i].get_px() + particle[j].get_px();
-      double py_sum   = particle[i].get_py() + particle[j].get_py();
-      double pz_sum   = particle[i].get_pz() + particle[j].get_pz();
-      double E_sum    = particle[i].get_energy() + particle[j].get_energy();
-      double mass_inv = std::sqrt(E_sum * E_sum - px_sum * px_sum
-                                  - py_sum * py_sum - pz_sum * pz_sum);
+      double mass_inv = particle[i].invMass(particle[j]);
 
       // calcolo la massa invariante tra le particelle i e j di base e la metto
       // negli istogrammi solo se le parti soddisfano le cond

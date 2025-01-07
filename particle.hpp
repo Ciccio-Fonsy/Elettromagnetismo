@@ -20,7 +20,7 @@ class Particle {
   double get_energy() const;
   void   set_p(double px, double py, double pz);
 
-  double invMass(Particle& other) const;
+  double invMass(const Particle& other) const;
 
   static void addParticleType(char name, double mass, int charge,
                               double width = 0);
@@ -86,7 +86,7 @@ inline double Particle::get_energy() const {
   return std::sqrt(mass * mass + p2);
 }
 
-inline double Particle::invMass(Particle& other) const {
+inline double Particle::invMass(const Particle& other) const {
   double other_px = other.get_px();
   double other_py = other.get_py();
   double other_pz = other.get_pz();
