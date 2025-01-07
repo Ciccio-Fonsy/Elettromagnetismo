@@ -26,7 +26,7 @@ Particle createRandomParticle(TRandom3* rand);
 void     fillInstogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
                        TH1D* hMassSameSign, TH1D* hMassPionKaonOpposite,
                        TH1D* hMassPionKaonSame, TH1D* hMassKStarDecay, TH1D* hType,
-                       TH1D* hEnergy, TH1D* aTheta, TH1D* hPhi, TH1D* hPout,
+                       TH1D* hEnergy, TH1D* hTheta, TH1D* hPhi, TH1D* hPout,
                        TH1D* hPtrasv, int n_particles);
 void     saveHistograms(const std::array<TH1D*, 12>& histograms,
                         const std::string&           filename);
@@ -86,7 +86,7 @@ int main() {
 
   TH1D* hType   = new TH1D("hType", "Particle type distribution", 7, 0, 7);
   TH1D* hEnergy = new TH1D("hEnergy", "Energy distribution", 300, 0, 6);
-  TH1D* aTheta  = new TH1D("aTheta", "Theta distribution", 100, 0, M_PI);
+  TH1D* hTheta  = new TH1D("hTheta", "Theta distribution", 100, 0, M_PI);
   TH1D* hPhi    = new TH1D("hPhi", "Phi distribution", 100, 0, M_PI * 2);
   TH1D* hPout   = new TH1D("hPout", "Pout distribution", 200, 0, 6);
   TH1D* hPtrasv = new TH1D("hPtrasv", "Ptrasv distribution", 200, 0, 6);
@@ -157,7 +157,7 @@ int main() {
     // riempimento istogrammi
     fillInstogram(event_particles, hMassOppositeSign, hMassSameSign,
                   hMassPionKaonOpposite, hMassPionKaonSame, hMassKStarDecay,
-                  hType, hEnergy, aTheta, hPhi, hPout, hPtrasv,
+                  hType, hEnergy, hTheta, hPhi, hPout, hPtrasv,
                   n_particles_event);
   }
 
@@ -170,7 +170,7 @@ int main() {
                                       hMassKStarDecay,
                                       hType,
                                       hEnergy,
-                                      aTheta,
+                                      hTheta,
                                       hPhi,
                                       hPout,
                                       hPtrasv};
@@ -237,7 +237,7 @@ Particle createRandomParticle(TRandom3* rand) {
 void fillInstogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
                    TH1D* hMassSameSign, TH1D* hMassPionKaonOpposite,
                    TH1D* hMassPionKaonSame, TH1D* hMassKStarDecay, TH1D* hType,
-                   TH1D* hEnergy, TH1D* aTheta, TH1D* hPhi, TH1D* hPout,
+                   TH1D* hEnergy, TH1D* hTheta, TH1D* hPhi, TH1D* hPout,
                    TH1D* hPtrasv, int n_particles) {
   for (int i = 0; i < n_particles; ++i) {
     // altri istogtammi credo
@@ -247,7 +247,7 @@ void fillInstogram(const Particle (&particle)[120], TH1D* hMassOppositeSign,
 
     hType->Fill(particle[i].get_index());
     hEnergy->Fill(particle[i].get_energy());
-    aTheta->Fill(std::acos(z / std::sqrt(x * x + y * y + z * z)));
+    hTheta->Fill(std::acos(z / std::sqrt(x * x + y * y + z * z)));
 
     double phi = std::atan2(y, x);
     if (phi < 0) {
