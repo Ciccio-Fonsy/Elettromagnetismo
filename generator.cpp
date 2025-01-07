@@ -61,30 +61,30 @@ int main() {
       new TH1D("hMassInvariant", "Mass Invariant distribution", 100, 0, 100001);
   hMassInvariant->Sumw2();
   TH1D* hMassOppositeSign = new TH1D(
-      "hMassOppositeSign", "Massa Invariante - Carica Discorde", 300, 0, 6);
+      "hMassOppositeSign", "Massa Invariante - Carica Discorde", 600, 0, 6);
   hMassOppositeSign->Sumw2();
   TH1D* hMassSameSign = new TH1D(
-      "hMassSameSign", "Massa Invariante - Carica Concorde", 300, 0, 6);
+      "hMassSameSign", "Massa Invariante - Carica Concorde", 600, 0, 6);
   hMassSameSign->Sumw2();
   TH1D* hMassPionKaonOpposite =
       new TH1D("hMassPionKaonOpposite",
-               "Massa Invariante - Pione+/Kaone- e Pione-/Kaone+", 300, 0, 6);
+               "Massa Invariante - Pione+/Kaone- e Pione-/Kaone+", 600, 0, 6);
   hMassPionKaonOpposite->Sumw2();
   TH1D* hMassPionKaonSame =
       new TH1D("hMassPionKaonSame",
-               "Massa Invariante - Pione+/Kaone+ e Pione-/Kaone-", 300, 0, 6);
+               "Massa Invariante - Pione+/Kaone+ e Pione-/Kaone-", 600, 0, 6);
   hMassPionKaonSame->Sumw2();
   TH1D* hMassKStarDecay =
       new TH1D("hMassKStarDecay", "Massa Invariante - Decadimento Risonanza K*",
-               100, 0.7, 1.05);
+               100, 0.7, 1.07);
   hMassKStarDecay->Sumw2();
 
   TH1D* hType   = new TH1D("hType", "Particle type distribution", 7, 0, 7);
-  TH1D* hEnergy = new TH1D("hEnergy", "Energy distribution", 300, 0, 6);
-  TH1D* hTheta  = new TH1D("hTheta", "Theta distribution", 100, 0, M_PI);
-  TH1D* hPhi    = new TH1D("hPhi", "Phi distribution", 100, 0, M_PI * 2);
-  TH1D* hPout   = new TH1D("hPout", "Pout distribution", 200, 0, 6);
-  TH1D* hPtrasv = new TH1D("hPtrasv", "Ptrasv distribution", 200, 0, 6);
+  TH1D* hEnergy = new TH1D("hEnergy", "Energy distribution", 600, 0, 6);
+  TH1D* hTheta  = new TH1D("hTheta", "Theta distribution", 314, 0, M_PI);
+  TH1D* hPhi    = new TH1D("hPhi", "Phi distribution", 628, 0, M_PI * 2);
+  TH1D* hPout   = new TH1D("hPout", "Pout distribution", 600, 0, 6);
+  TH1D* hPtrasv = new TH1D("hPtrasv", "Ptrasv distribution", 600, 0, 6);
 
   double total_energy = 0;
   double total_px     = 0;

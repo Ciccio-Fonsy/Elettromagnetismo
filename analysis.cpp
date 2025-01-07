@@ -130,29 +130,39 @@ int main() {
     std::cerr << "Errore nel recupero della funzione di fit." << std::endl;
   }
   std::cout << '\n';
+  std::cout << "Media pout:\n";
+  std::cout << hPout->GetMean() << '\n';
 
   // sottraggo gli istogrammi delle masse invarianti con carica opposta e stessa
   // carica
   TH1F* hMassInvariantSub1 = new TH1F(
       "hMassInvariantSub1",
-      "Massa invariante con carica opposta - stessa carica", 300, 0, 6);
+      "Massa invariante con carica opposta - stessa carica", 600, 0, 6);
   hMassInvariantSub1->Add(hMassSameSign, 1);
   hMassInvariantSub1->Add(hMassOppositeSign, -1);
+  for (int i = 0; i < hMassInvariantSub1->GetNbinsX(); ++i) {
+    hMassInvariantSub1->SetBinContent(
+        i, std::abs(hMassInvariantSub1->GetBinContent(i)));
+  }
   hMassInvariantSub1->GetXaxis()->SetTitle("Massa invariante [GeV/c^{2}]");
   hMassInvariantSub1->GetYaxis()->SetTitle("Eventi");
   hMassInvariantSub1->SetLineColor(kGreen);
-  hMassInvariantSub1->Draw("APE");
+  hMassInvariantSub1->Draw("HISTO");
   TH1F* hMassInvariantSub2 = new TH1F(
       "hMassInvariantSub2",
       "Massa invariante con carica opposta - stessa carica per pioni e kaoni",
-      300, 0, 6);
+      600, 0, 6);
   hMassInvariantSub2->Add(hMassPionKaonOpposite, 1);
   hMassInvariantSub2->Add(hMassPionKaonSame, -1);
+  for (int i = 0; i < hMassInvariantSub2->GetNbinsX(); ++i) {
+    hMassInvariantSub2->SetBinContent(
+        i, std::abs(hMassInvariantSub2->GetBinContent(i)));
+  }
   hMassInvariantSub2->GetXaxis()->SetTitle("Massa invariante [GeV/c^{2}]");
   hMassInvariantSub2->GetYaxis()->SetTitle("Eventi");
   hMassInvariantSub2->SetLineColor(kRed);
-  hMassInvariantSub2->Draw("SAME,APE");
-  hMassKStarDecay->Draw("SAME,APE");
+  hMassInvariantSub2->Draw("SAME,HISTO");
+  hMassKStarDecay->Draw("SAME,HISTO");
 
   canvas->Update();
 

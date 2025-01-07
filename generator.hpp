@@ -7,79 +7,6 @@
 #include <TH1D.h>
 #include <TRandom3.h>
 
-void createInstances(int n_event, int n_particles_event, TRandom3* rand,
-                     std::array<Particle, 120>& event_particles,
-                     double& total_energy, double& total_px, double& total_py,
-                     double& total_pz, TH1D* hMassKStarDecay,
-                     TH1D* hMassInvariant, TH1D* hMassOppositeSign,
-                     TH1D* hMassSameSign, TH1D* hMassPionKaonOpposite,
-                     TH1D* hMassPionKaonSame, TH1D* hType, TH1D* hEnergy,
-                     TH1D* hTheta, TH1D* hPhi, TH1D* hPout, TH1D* hPtrasv) {
-  std::cout << "Generazione delle istanze..." << std::endl;
-  for (int i = 0; i < n_event; ++i) {
-    int    particle_count = 0;
-    double mass_invariant = 0;
-
-    for (int j = 0; j < n_particles_event; ++j) {
-      Particle new_particle = createRandomParticle(rand);
-
-      if (new_particle.get_name() == '*') {
-        char dau1_name = 0;
-        char dau2_name = 0;
-
-        switch (rand->Integer(2)) {
-        case 0:
-          dau1_name = 'Q';
-          dau2_name = 'k';
-          break;
-        case 1:
-          dau1_name = 'q';
-          dau2_name = 'K';
-          break;
-        }
-
-        event_particles[particle_count] = Particle(dau1_name);
-
-        event_particles[particle_count + 1] = Particle(dau2_name);
-
-        new_particle.decay2body(event_particles[particle_count],
-                                event_particles[particle_count + 1]);
-
-        total_energy += (event_particles[particle_count].get_energy()
-                         + event_particles[particle_count + 1].get_energy());
-        total_px     += (event_particles[particle_count].get_px()
-                     + event_particles[particle_count + 1].get_px());
-        total_py     += (event_particles[particle_count].get_py()
-                     + event_particles[particle_count + 1].get_py());
-        total_pz     += (event_particles[particle_count].get_pz()
-                     + event_particles[particle_count + 1].get_pz());
-
-        hMassKStarDecay->Fill(event_particles[particle_count].invMass(
-            event_particles[particle_count + 1]));
-
-        particle_count += 2;
-      } else {
-        event_particles[particle_count] = new_particle;
-
-        total_energy += new_particle.get_energy();
-        total_px     += new_particle.get_px();
-        total_py     += new_particle.get_py();
-        total_pz     += new_particle.get_pz();
-
-        ++particle_count;
-      }
-    }
-
-    mass_invariant = std::sqrt(total_energy * total_energy - total_px * total_px
-                               - total_py * total_py - total_pz * total_pz);
-    hMassInvariant->Fill(mass_invariant);
-    // riempimento istogrammi
-    fillHistogram(event_particles, hMassOppositeSign, hMassSameSign,
-                  hMassPionKaonOpposite, hMassPionKaonSame, hType, hEnergy,
-                  hTheta, hPhi, hPout, hPtrasv, particle_count);
-  }
-}
-
 void randomParticlePosition(TRandom3* rand, Particle& particle) {
   double phi   = rand->Uniform(0, 2 * M_PI);
   double theta = rand->Uniform(0, M_PI);
@@ -186,6 +113,79 @@ void fillHistogram(const std::array<Particle, 120>& particle,
       gaussiana con media la massa della K*, e RMS la larghezza della K* come
       impostata all’inizio del programma.    */
     }
+  }
+}
+
+void createInstances(int n_event, int n_particles_event, TRandom3* rand,
+                     std::array<Particle, 120>& event_particles,
+                     double& total_energy, double& total_px, double& total_py,
+                     double& total_pz, TH1D* hMassKStarDecay,
+                     TH1D* hMassInvariant, TH1D* hMassOppositeSign,
+                     TH1D* hMassSameSign, TH1D* hMassPionKaonOpposite,
+                     TH1D* hMassPionKaonSame, TH1D* hType, TH1D* hEnergy,
+                     TH1D* hTheta, TH1D* hPhi, TH1D* hPout, TH1D* hPtrasv) {
+  std::cout << "Generazione delle istanze..." << std::endl;
+  for (int i = 0; i < n_event; ++i) {
+    int    particle_count = 0;
+    double mass_invariant = 0;
+
+    for (int j = 0; j < n_particles_event; ++j) {
+      Particle new_particle = createRandomParticle(rand);
+
+      if (new_particle.get_name() == '*') {
+        char dau1_name = 0;
+        char dau2_name = 0;
+
+        switch (rand->Integer(2)) {
+        case 0:
+          dau1_name = 'Q';
+          dau2_name = 'k';
+          break;
+        case 1:
+          dau1_name = 'q';
+          dau2_name = 'K';
+          break;
+        }
+
+        event_particles[particle_count] = Particle(dau1_name);
+
+        event_particles[particle_count + 1] = Particle(dau2_name);
+
+        new_particle.decay2body(event_particles[particle_count],
+                                event_particles[particle_count + 1]);
+
+        total_energy += (event_particles[particle_count].get_energy()
+                         + event_particles[particle_count + 1].get_energy());
+        total_px     += (event_particles[particle_count].get_px()
+                     + event_particles[particle_count + 1].get_px());
+        total_py     += (event_particles[particle_count].get_py()
+                     + event_particles[particle_count + 1].get_py());
+        total_pz     += (event_particles[particle_count].get_pz()
+                     + event_particles[particle_count + 1].get_pz());
+
+        hMassKStarDecay->Fill(event_particles[particle_count].invMass(
+            event_particles[particle_count + 1]));
+
+        particle_count += 2;
+      } else {
+        event_particles[particle_count] = new_particle;
+
+        total_energy += new_particle.get_energy();
+        total_px     += new_particle.get_px();
+        total_py     += new_particle.get_py();
+        total_pz     += new_particle.get_pz();
+
+        ++particle_count;
+      }
+    }
+
+    mass_invariant = std::sqrt(total_energy * total_energy - total_px * total_px
+                               - total_py * total_py - total_pz * total_pz);
+    hMassInvariant->Fill(mass_invariant);
+    // riempimento istogrammi
+    fillHistogram(event_particles, hMassOppositeSign, hMassSameSign,
+                  hMassPionKaonOpposite, hMassPionKaonSame, hType, hEnergy,
+                  hTheta, hPhi, hPout, hPtrasv, particle_count);
   }
 }
 
