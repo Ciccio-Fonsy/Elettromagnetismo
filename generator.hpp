@@ -88,14 +88,20 @@ void fillHistogram(const std::array<Particle, 120>& particle,
 
       // Massa invariante tra particelle di tipo Pion+/Kaon- e Pion-/Kaon+
       if ((particle[i].get_name() == 'Q' && particle[j].get_name() == 'k')
-          || (particle[i].get_name() == 'q' && particle[j].get_name() == 'K')) {
+          || (particle[i].get_name() == 'q' && particle[j].get_name() == 'K')
+          || (particle[i].get_name() == 'K' && particle[j].get_name() == 'q')
+          || (particle[i].get_name() == 'k' && particle[j].get_name() == 'Q')) {
         hMassPionKaonOpposite->Fill(mass_inv);
       }
 
       // Massa invariante tra particelle di tipo Pion+/Kaon+ e Pion-/Kaon-
       else if ((particle[i].get_name() == 'Q' && particle[j].get_name() == 'K')
                || (particle[i].get_name() == 'q'
-                   && particle[j].get_name() == 'k')) {
+                   && particle[j].get_name() == 'k')
+               || (particle[i].get_name() == 'K'
+                   && particle[j].get_name() == 'Q')
+               || (particle[i].get_name() == 'k'
+                   && particle[j].get_name() == 'q')) {
         hMassPionKaonSame->Fill(mass_inv);
       }
 

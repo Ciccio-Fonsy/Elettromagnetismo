@@ -50,22 +50,28 @@ int main() {
   hType->GetXaxis()->SetBinLabel(2, "\u03C0-");
 
   // costruisco un vettore di istogrammi
-  std::array<TH1D*, 12> h_array = {hInvariantMass,
+  std::array<TH1D*, 12> h_array = {hType,
+                                   hInvariantMass,
                                    hMassOppositeSign,
                                    hMassSameSign,
                                    hMassPionKaonOpposite,
                                    hMassPionKaonSame,
                                    hMassKStarDecay,
-                                   hType,
                                    hEnergy,
                                    hTheta,
                                    hPhi,
                                    hPout,
                                    hPtrasv};
 
+  std::array<double, 12> expected_array = {
+    1.01e+07, 5.05e+08, 2.55e+08, 2.50e+08, 4.40e+07, 4.40e+07,
+    1.00e+05, 1.01e+07, 1.01e+07, 1.01e+07, 1.01e+07, 1.01e+07,
+  };
+
   // Numero di ingressi
-  for (auto h : h_array) {
-    std::cout << "Entries in " << h->GetName() << ": " << h->GetEntries()
+  for (int i = 0; i < 12; ++i) {
+    std::cout << "Entries in " << h_array[i]->GetName() << ": "
+              << h_array[i]->GetEntries() << ", expected: " << expected_array[i]
               << std::endl;
   }
   std::cout << '\n';
