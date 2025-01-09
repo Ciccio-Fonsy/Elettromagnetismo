@@ -73,12 +73,13 @@ int main() {
       "hMassPionKaonSame", "Invariant Mass - Pi/K concordant", 600, 0, 6);
   hMassPionKaonSame->Sumw2();
   TH1D* hMassKStarDecay =
-      new TH1D("hMassKStarDecay", "Invariant Mass - K* decay", 100, 0.7, 1.07);
+      new TH1D("hMassKStarDecay", "Invariant Mass - K* decay", 40, 0.7, 1.1);
   hMassKStarDecay->Sumw2();
 
   TH1D* hType = new TH1D("hType", "Particle type distribution", 7, 0, 7);
-  hType->GetXaxis()->SetBinLabel(1, "\u03C0+");
-  hType->GetXaxis()->SetBinLabel(2, "\u03C0-");
+  hType->SetStats(0);
+  hType->GetXaxis()->SetBinLabel(1, "#pi+");
+  hType->GetXaxis()->SetBinLabel(2, "#pi-");
   hType->GetXaxis()->SetBinLabel(3, "P+");
   hType->GetXaxis()->SetBinLabel(4, "P-");
   hType->GetXaxis()->SetBinLabel(5, "K+");
@@ -87,7 +88,7 @@ int main() {
 
   TH1D* hEnergy = new TH1D("hEnergy", "Energy distribution", 600, 0, 6);
   TH1D* hTheta  = new TH1D("hTheta", "Theta distribution", 314, 0, M_PI);
-  TH1D* hPhi    = new TH1D("hPhi", "Phi distribution", 628, 0, M_PI * 2);
+  TH1D* hPhi    = new TH1D("hPhi", "Phi distribution", 628, 0, 2 * M_PI);
   TH1D* hPout   = new TH1D("hPout", "Momentum distribution", 600, 0, 6);
   TH1D* hPtrasv =
       new TH1D("hPtrasv", "Transverse momentum distribution", 600, 0, 6);
@@ -115,15 +116,16 @@ int main() {
                                       hPout,
                                       hPtrasv};
 
-  // Save histograms to a file
-  saveHistograms(histograms, "IstogrammiParticelle.root");
-
   std::cout << "Drawing histograms..." << std::endl;
 
-  for (int i = 0; i < 12; ++i) {
+  canvas->cd(1);
+  hType->Draw("E");
+  for (int i = 1; i < 12; ++i) {
     canvas->cd(i + 1);
-    histograms[i]->Draw("APE");
+    histograms[i]->Draw("P");
   }
+
+  saveHistograms(histograms, "IstogrammiParticelle.root");
 
   canvas->Update(); // Aggiorna il canvas per visualizzare i grafici
 

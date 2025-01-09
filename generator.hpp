@@ -50,25 +50,21 @@ void fillHistogram(const std::array<Particle, 120>& particle,
                    int n_particles) {
   for (int i = 0; i < n_particles; ++i) {
     // altri istogtammi credo
-    double x = particle[i].get_px();
-    double y = particle[i].get_py();
-    double z = particle[i].get_pz();
+    double x     = particle[i].get_px();
+    double y     = particle[i].get_py();
+    double z     = particle[i].get_pz();
+    double r     = std::sqrt(x * x + y * y + z * z);
+    double theta = std::acos(z / r);
+    double phi   = std::atan2(y, x);
+    if (phi < 0) phi = phi + 2 * M_PI;
 
     hType->Fill(particle[i].get_index());
     hEnergy->Fill(particle[i].get_energy());
-    hTheta->Fill(std::acos(z / std::sqrt(x * x + y * y + z * z)));
 
-    double phi = std::atan2(y, x);
-    if (phi < 0) {
-      phi += 2 * M_PI; // Convert the range from [-pi, pi] to [0, 2*pi]
-    }
-
+    hTheta->Fill(theta);
     hPhi->Fill(phi);
-    hPout->Fill(std::sqrt(particle[i].get_px() * particle[i].get_px()
-                          + particle[i].get_py() * particle[i].get_py()
-                          + particle[i].get_pz() * particle[i].get_pz()));
-    hPtrasv->Fill(std::sqrt(particle[i].get_px() * particle[i].get_px()
-                            + particle[i].get_py() * particle[i].get_py()));
+    hPout->Fill(r);
+    hPtrasv->Fill(std::sqrt(x * x + y * y));
 
     for (int j = i + 1; j < n_particles; ++j) {
       double mass_inv = particle[i].invMass(particle[j]);

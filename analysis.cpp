@@ -46,6 +46,9 @@ int main() {
     return 2;
   }
 
+  hType->GetXaxis()->SetBinLabel(1, "\u03C0+");
+  hType->GetXaxis()->SetBinLabel(2, "\u03C0-");
+
   // costruisco un vettore di istogrammi
   std::array<TH1D*, 12> h_array = {hInvariantMass,
                                    hMassOppositeSign,
@@ -78,36 +81,31 @@ int main() {
   std::cout << '\n';
 
   // Fit della distribuzione angolare con una funzione uniforme
-  TF1* f_uniform_phi = new TF1("f_uniform_phi", "[0]", 0, 2 * M_PI);
-
-  f_uniform_phi->Print();
-  std::cout << "\u03C6 uniform fit results:" << std::endl;
-  hPhi->Fit("f_uniform_phi", "Q");
-  std::cout << "  Constant:\t" << f_uniform_phi->GetParameter(0) << " +/- "
-            << f_uniform_phi->GetParError(0) << std::endl;
-  std::cout << "  Chi2/NDF:\t"
-            << f_uniform_phi->GetChisquare() / f_uniform_phi->GetNDF()
-            << std::endl;
-  std::cout << "  Probability:\t" << f_uniform_phi->GetProb() << std::endl;
+  TF1* f_uniform = new TF1("f_uniform", "[0]");
+  f_uniform->Print();
   std::cout << '\n';
 
-  // Fit della distribuzione angolare con una funzione uniforme
-  TF1* f_uniform_theta = new TF1("f_uniform_theta", "[0]", 0, M_PI);
-
-  f_uniform_theta->Print();
-  std::cout << "\u03B8 uniform fit results:" << std::endl;
-  hTheta->Fit("f_uniform_theta", "Q");
-  std::cout << "  Constant:\t" << f_uniform_theta->GetParameter(0) << " +/- "
-            << f_uniform_theta->GetParError(0) << std::endl;
+  std::cout << "\u03C6 uniform fit results:" << std::endl;
+  hPhi->Fit("f_uniform", "Q");
+  std::cout << "  Constant:\t" << f_uniform->GetParameter(0) << " +/- "
+            << f_uniform->GetParError(0) << std::endl;
   std::cout << "  Chi2/NDF:\t"
-            << f_uniform_theta->GetChisquare() / f_uniform_theta->GetNDF()
-            << std::endl;
-  std::cout << "  Probability:\t" << f_uniform_theta->GetProb() << std::endl;
+            << f_uniform->GetChisquare() / f_uniform->GetNDF() << std::endl;
+  std::cout << "  Probability:\t" << f_uniform->GetProb() << std::endl;
+  std::cout << '\n';
+
+  std::cout << "\u03B8 uniform fit results:" << std::endl;
+  hTheta->Fit("f_uniform", "Q");
+  std::cout << "  Constant:\t" << f_uniform->GetParameter(0) << " +/- "
+            << f_uniform->GetParError(0) << std::endl;
+  std::cout << "  Chi2/NDF:\t"
+            << f_uniform->GetChisquare() / f_uniform->GetNDF() << std::endl;
+  std::cout << "  Probability:\t" << f_uniform->GetProb() << std::endl;
   std::cout << '\n';
 
   // Fit della distribuzione del modulo dell'impulso con una funzione
   // esponenziale
-  TF1* f_exponential = new TF1("f_exponential", "[0]*exp(-[1]*x)", 0, 6);
+  TF1* f_exponential = new TF1("f_exponential", "[0]*exp(-[1]*x)");
 
   f_exponential->Print();
   std::cout << "Momentum exponential fit results:" << std::endl;
@@ -128,7 +126,7 @@ int main() {
   TH1F* hInvariantMassSub1 = new TH1F(
       "hInvariantMassSub1",
       "Invariant mass of K* decays (blue), difference between concordant and discordant charge particles (green) and concordant and discordant #pi/K couples (red)",
-      600, 0, 6);
+      hMassSameSign->GetNbinsX(), 0, 6);
   hInvariantMassSub1->Add(hMassSameSign, 1);
   hInvariantMassSub1->Add(hMassOppositeSign, -1);
   for (int i = 0; i < hInvariantMassSub1->GetNbinsX(); ++i) {
@@ -144,9 +142,9 @@ int main() {
   TH1F* hInvariantMassSub2 = new TH1F(
       "hInvariantMassSub2",
       "Invariant mass of K* decays (blue), difference between concordant and discordant charge particles (green) and concordant and discordant #pi/K couples (red)",
-      600, 0, 6);
-  hInvariantMassSub2->Add(hMassPionKaonOpposite, 1);
-  hInvariantMassSub2->Add(hMassPionKaonSame, -1);
+      hMassPionKaonSame->GetNbinsX(), 0, 6);
+  hInvariantMassSub2->Add(hMassPionKaonSame, 1);
+  hInvariantMassSub2->Add(hMassPionKaonOpposite, -1);
   for (int i = 0; i < hInvariantMassSub2->GetNbinsX(); ++i) {
     hInvariantMassSub2->SetBinContent(
         i, std::abs(hInvariantMassSub2->GetBinContent(i)));
