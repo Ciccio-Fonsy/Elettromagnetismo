@@ -142,12 +142,8 @@ int main() {
       "hInvariantMassSub1",
       "Invariant mass of K* decays (blue), difference between concordant and discordant charge particles (green) and concordant and discordant #pi/K couples (red)",
       hMassSameSign->GetNbinsX(), 0, 6);
-  hInvariantMassSub1->Add(hMassSameSign, 1);
-  hInvariantMassSub1->Add(hMassOppositeSign, -1);
-  for (int i = 0; i < hInvariantMassSub1->GetNbinsX(); ++i) {
-    hInvariantMassSub1->SetBinContent(
-        i, std::abs(hInvariantMassSub1->GetBinContent(i)));
-  }
+  hInvariantMassSub1->Add(hMassOppositeSign, 1);
+  hInvariantMassSub1->Add(hMassSameSign, -1);
   hInvariantMassSub1->GetXaxis()->SetTitle("Invariant mass [GeV/c^{2}]");
   hInvariantMassSub1->GetYaxis()->SetTitle("Events");
   hInvariantMassSub1->SetLineColor(kGreen);
@@ -158,18 +154,13 @@ int main() {
       "hInvariantMassSub2",
       "Invariant mass of K* decays (blue), difference between concordant and discordant charge particles (green) and concordant and discordant #pi/K couples (red)",
       hMassPionKaonSame->GetNbinsX(), 0, 6);
-  hInvariantMassSub2->Add(hMassPionKaonSame, 1);
-  hInvariantMassSub2->Add(hMassPionKaonOpposite, -1);
-  for (int i = 0; i < hInvariantMassSub2->GetNbinsX(); ++i) {
-    hInvariantMassSub2->SetBinContent(
-        i, std::abs(hInvariantMassSub2->GetBinContent(i)));
-  }
+  hInvariantMassSub2->Add(hMassPionKaonOpposite, 1);
+  hInvariantMassSub2->Add(hMassPionKaonSame, -1);
   hInvariantMassSub2->GetXaxis()->SetTitle("Invariant mass [GeV/c^{2}]");
   hInvariantMassSub2->GetYaxis()->SetTitle("Events");
   hInvariantMassSub2->SetLineColor(kRed);
   hInvariantMassSub2->SetStats(0);
   hInvariantMassSub2->Draw("SAME,HISTO");
-
   hMassKStarDecay->SetStats(0);
   hMassKStarDecay->Draw("SAME,HISTO");
 
@@ -182,6 +173,8 @@ int main() {
 
   // Stampiamo i parametri del fit
   std::cout << "True K* decays gaussian fit results:" << std::endl;
+  std::cout << "  Amplitude:\t" << f_gaussian->GetParameter(0) << " ± "
+            << f_gaussian->GetParError(0) << std::endl;
   std::cout << "  K* mass:\t" << f_gaussian->GetParameter(1) << " ± "
             << f_gaussian->GetParError(1) << std::endl;
   std::cout << "  K* width:\t" << f_gaussian->GetParameter(2) << " ± "
@@ -199,6 +192,8 @@ int main() {
   // Stampiamo i parametri del fit
   std::cout << "Concordant - discordant particles gaussian fit results:"
             << std::endl;
+  std::cout << "  Amplitude:\t" << f_gaussian->GetParameter(0) << " ± "
+            << f_gaussian->GetParError(0) << std::endl;
   std::cout << "  K* mass:\t" << f_gaussian->GetParameter(1) << " ± "
             << f_gaussian->GetParError(1) << std::endl;
   std::cout << "  K* width:\t" << f_gaussian->GetParameter(2) << " ± "
@@ -216,6 +211,8 @@ int main() {
   // Stampiamo i parametri del fit
   std::cout << "Concordant - discordant \u03C0/K couples gaussian fit results:"
             << std::endl;
+  std::cout << "  Amplitude:\t" << f_gaussian->GetParameter(0) << " ± "
+            << f_gaussian->GetParError(0) << std::endl;
   std::cout << "  K* mass:\t" << f_gaussian->GetParameter(1) << " ± "
             << f_gaussian->GetParError(1) << std::endl;
   std::cout << "  K* width:\t" << f_gaussian->GetParameter(2) << " ± "
