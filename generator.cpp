@@ -107,19 +107,6 @@ void fillHistogram(const std::array<Particle, 120>& particle,
                    && particle[j].get_name() == 'q')) {
         hMassPionKaonSame->Fill(mass_inv);
       }
-
-      /* massa invariante fra le particelle generate in ogni evento che derivano
-      dal decadimento della risonanza K* (quelle in “coda”, per intenderci. N.B.
-      considerate esclusivamente coppie di particelle figlie che provengono
-      dalla stessa “madre”, i.e. non mischiare “figlie” di “madri” diverse,
-      poiché solo nel primo caso si osserverà in questo istogramma il
-      caratteristico picco di massa invariante). Questo istogramma fa da
-      istogramma di benchmark affinché si possa essere certi che la gestione del
-      decadimento, le formule di massa invariante/energia e la virtualizzazione
-      delle classi ParticleType/ResonanceType siano state correttamente
-      implementate. Se tutto è ok in questa fase, dovreste osservare una
-      gaussiana con media la massa della K*, e RMS la larghezza della K* come
-      impostata all’inizio del programma.    */
     }
   }
 }
@@ -219,13 +206,6 @@ int main() {
   int                       n_particles_event = 100;
   std::array<Particle, 120> event_particles;
 
-  // secondo Massimo "si dovrebbero cambiare i nomi dei grafici con dei
-  // numeri così alla fine si può usare un ciclo for per scrivere i grafici
-  // a fine codice e per il metodo sumw :)"
-
-  // range tra 0 e 3, il numero dei bin è , non 60 se no è troopo largo,
-  // 180.
-
   TH1D* hInvariantMass =
       new TH1D("hInvariantMass", "Invariant Mass distribution", 600, 0, 6);
   hInvariantMass->Sumw2();
@@ -263,8 +243,7 @@ int main() {
       new TH1D("hPtrasv", "Transverse momentum distribution", 600, 0, 6);
 
   TRandom3 rand;
-  rand.SetSeed(0); // set seed for random number generator non so se ho
-                   // incluso la classe giusta
+  rand.SetSeed(0);
 
   createInstances(n_event, n_particles_event, &rand, event_particles,
                   hMassKStarDecay, hInvariantMass, hMassOppositeSign,
@@ -298,8 +277,6 @@ int main() {
 
   canvas->Update(); // Aggiorna il canvas per visualizzare i grafici
 
-  // Start the ROOT application event loop, but check periodically if the canvas
-  // is closed
   while (gROOT->GetListOfCanvases()->FindObject("c1")) {
     gSystem->ProcessEvents(); // Process any events (including canvas events)
     gSystem->Sleep(100);      // Add a small delay to prevent 100% CPU usage
@@ -309,4 +286,3 @@ int main() {
 
   return 0;
 }
-// g++ main.cpp $(root-config --cflags --libs) -o main
