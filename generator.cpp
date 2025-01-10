@@ -49,14 +49,7 @@ int main() {
   int                       n_event           = 100000;
   int                       n_particles_event = 100;
   std::array<Particle, 120> event_particles;
-
-  // secondo Massimo "si dovrebbero cambiare i nomi dei grafici con dei
-  // numeri così alla fine si può usare un ciclo for per scrivere i grafici
-  // a fine codice e per il metodo sumw :)"
-
-  // range tra 0 e 3, il numero dei bin è , non 60 se no è troopo largo,
-  // 180.
-
+  
   TH1D* hInvariantMass =
       new TH1D("hInvariantMass", "Invariant Mass distribution", 600, 0, 6);
   hInvariantMass->Sumw2();
@@ -94,15 +87,14 @@ int main() {
       new TH1D("hPtrasv", "Transverse momentum distribution", 600, 0, 6);
 
   TRandom3 rand;
-  rand.SetSeed(0); // set seed for random number generator non so se ho
-                   // incluso la classe giusta
+  rand.SetSeed(0);
 
   createInstances(n_event, n_particles_event, &rand, event_particles,
                   hMassKStarDecay, hInvariantMass, hMassOppositeSign,
                   hMassSameSign, hMassPionKaonOpposite, hMassPionKaonSame,
                   hType, hEnergy, hTheta, hPhi, hPout, hPtrasv);
 
-  // Collect all histograms into a vector
+  // costruisco un vettore di istogrammi
   std::array<TH1D*, 12> histograms = {hType,
                                       hInvariantMass,
                                       hMassOppositeSign,
@@ -129,15 +121,14 @@ int main() {
 
   canvas->Update(); // Aggiorna il canvas per visualizzare i grafici
 
-  // Start the ROOT application event loop, but check periodically if the canvas
-  // is closed
+
   while (gROOT->GetListOfCanvases()->FindObject("c1")) {
-    gSystem->ProcessEvents(); // Process any events (including canvas events)
-    gSystem->Sleep(100);      // Add a small delay to prevent 100% CPU usage
+    gSystem->ProcessEvents(); 
+    gSystem->Sleep(100);      
   }
 
   std::cout << "Canvas closed. Exiting program." << std::endl;
 
   return 0;
 }
-// g++ main.cpp $(root-config --cflags --libs) -o main
+
