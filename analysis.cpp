@@ -10,13 +10,16 @@
 #include <TStyle.h>
 #include <TSystem.h>
 
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 
 int main() {
   TApplication theApp("App", 0, 0);
   // Apri il file ROOT
-  TCanvas*     canvas = new TCanvas("c1", "Analysis", 800, 600);
+  TCanvas*     canvas  = new TCanvas("c1", "Analysis", 800, 600);
+  TCanvas*     canvas2 = new TCanvas("c2", "Analysis", 800, 600);
+  canvas->Divide(3, 2);
+  canvas->cd(1);
 
   TFile* file = TFile::Open("IstogrammiParticelle.root");
 
@@ -102,7 +105,9 @@ int main() {
             << f_uniform->GetChisquare() / f_uniform->GetNDF() << std::endl;
   std::cout << "  Probability:\t" << f_uniform->GetProb() << std::endl;
   std::cout << '\n';
+  hPhi->Draw("P SAME");
 
+  canvas->cd(2);
   std::cout << "\u03B8 uniform fit results:" << std::endl;
   hTheta->Fit("f_uniform", "Q");
   std::cout << "  Constant:\t" << f_uniform->GetParameter(0) << " ± "
@@ -113,7 +118,9 @@ int main() {
             << f_uniform->GetChisquare() / f_uniform->GetNDF() << std::endl;
   std::cout << "  Probability:\t" << f_uniform->GetProb() << std::endl;
   std::cout << '\n';
+  hTheta->Draw("P SAME");
 
+  canvas->cd(3);
   // Fit della distribuzione del modulo dell'impulso con una funzione
   // esponenziale
   TF1* f_exponential = new TF1("f_exponential", "[0]*exp(-[1]*x)");
@@ -136,59 +143,28 @@ int main() {
             << std::endl;
   std::cout << "  Probability:\t" << f_exponential->GetProb() << std::endl;
   std::cout << '\n';
+  hPout->Draw("P SAME");
+
+  canvas->cd(4);
+  TF1* f_gaussian = new TF1("f_gaussian", "gaus(0)", 0.7, 1.1);
+  f_gaussian->SetLineColor(kBlack);
 
   // sottraggo gli istogrammi delle masse invarianti con carica opposta e stessa
   // carica
   TH1F* hInvariantMassSub1 = new TH1F(
       "hInvariantMassSub1",
-      "Invariant mass of K* decays (blue), difference between concordant and discordant charge particles (green) and concordant and discordant #pi/K couples (red)",
+      "Difference in invariant mass between concordant and discordant charge particles",
       hMassSameSign->GetNbinsX(), 0, 6);
   hInvariantMassSub1->Add(hMassOppositeSign, 1);
   hInvariantMassSub1->Add(hMassSameSign, -1);
   hInvariantMassSub1->GetXaxis()->SetTitle("Invariant mass [GeV/c^{2}]");
   hInvariantMassSub1->GetYaxis()->SetTitle("Events");
   hInvariantMassSub1->SetLineColor(kGreen);
-  hInvariantMassSub1->SetStats(0);
-  hInvariantMassSub1->Draw("HISTO");
-
-  TH1F* hInvariantMassSub2 = new TH1F(
-      "hInvariantMassSub2",
-      "Invariant mass of K* decays (blue), difference between concordant and discordant charge particles (green) and concordant and discordant #pi/K couples (red)",
-      hMassPionKaonSame->GetNbinsX(), 0, 6);
-  hInvariantMassSub2->Add(hMassPionKaonOpposite, 1);
-  hInvariantMassSub2->Add(hMassPionKaonSame, -1);
-  hInvariantMassSub2->GetXaxis()->SetTitle("Invariant mass [GeV/c^{2}]");
-  hInvariantMassSub2->GetYaxis()->SetTitle("Events");
-  hInvariantMassSub2->SetLineColor(kRed);
-  hInvariantMassSub2->SetStats(0);
-  hInvariantMassSub2->Draw("SAME,HISTO");
-  hMassKStarDecay->SetStats(0);
-  hMassKStarDecay->Draw("SAME,HISTO");
-
-  canvas->Update();
-
-  TF1* f_gaussian = new TF1("f_gaussian", "gaus(0)", 0.7, 1.1);
-
-  // Eseguiamo il fit sull'istogramma risultato dalla sottrazione
-  hMassKStarDecay->Fit("f_gaussian", "Q", nullptr, 0.7, 1.1);
-
-  // Stampiamo i parametri del fit
-  std::cout << "True K* decays gaussian fit results:" << std::endl;
-  std::cout << "  Amplitude:\t" << f_gaussian->GetParameter(0) << " ± "
-            << f_gaussian->GetParError(0) << std::endl;
-  std::cout << "  K* mass:\t" << f_gaussian->GetParameter(1) << " ± "
-            << f_gaussian->GetParError(1) << std::endl;
-  std::cout << "  K* width:\t" << f_gaussian->GetParameter(2) << " ± "
-            << f_gaussian->GetParError(2) << std::endl;
-  std::cout << "  \u03C7²:\t\t" << f_gaussian->GetChisquare() << std::endl;
-  std::cout << "  NDF:\t\t" << f_gaussian->GetNDF() << std::endl;
-  std::cout << "  \u03C7²/NDF:\t"
-            << f_gaussian->GetChisquare() / f_gaussian->GetNDF() << std::endl;
-  std::cout << "  Probability:\t" << f_gaussian->GetProb() << std::endl;
-  std::cout << '\n';
 
   // Eseguiamo il fit sull'istogramma risultato dalla sottrazione
   hInvariantMassSub1->Fit("f_gaussian", "Q", nullptr, 0.7, 1.1);
+
+  hInvariantMassSub1->Draw("HIST SAME");
 
   // Stampiamo i parametri del fit
   std::cout << "Concordant - discordant particles gaussian fit results:"
@@ -206,8 +182,22 @@ int main() {
   std::cout << "  Probability:\t" << f_gaussian->GetProb() << std::endl;
   std::cout << '\n';
 
+  canvas->cd(5);
+
+  TH1F* hInvariantMassSub2 = new TH1F(
+      "hInvariantMassSub2",
+      "Difference in invariant mass between concordant and discordant #pi/K couples",
+      hMassPionKaonSame->GetNbinsX(), 0, 6);
+  hInvariantMassSub2->Add(hMassPionKaonOpposite, 1);
+  hInvariantMassSub2->Add(hMassPionKaonSame, -1);
+  hInvariantMassSub2->GetXaxis()->SetTitle("Invariant mass [GeV/c^{2}]");
+  hInvariantMassSub2->GetYaxis()->SetTitle("Events");
+  hInvariantMassSub2->SetLineColor(kRed);
+
   // Eseguiamo il fit sull'istogramma risultato dalla sottrazione
   hInvariantMassSub2->Fit("f_gaussian", "Q", nullptr, 0.7, 1.1);
+
+  hInvariantMassSub2->Draw("HIST SAME");
 
   // Stampiamo i parametri del fit
   std::cout << "Concordant - discordant \u03C0/K couples gaussian fit results:"
@@ -225,7 +215,35 @@ int main() {
   std::cout << "  Probability:\t" << f_gaussian->GetProb() << std::endl;
   std::cout << '\n';
 
-  while (gROOT->GetListOfCanvases()->FindObject("c1")) {
+  canvas->cd(6);
+
+  // Eseguiamo il fit sull'istogramma risultato dalla sottrazione
+  hMassKStarDecay->Fit("f_gaussian", "Q", nullptr, 0.7, 1.1);
+
+  hMassKStarDecay->Draw("HIST SAME");
+
+  // Stampiamo i parametri del fit
+  std::cout << "True K* decays gaussian fit results:" << std::endl;
+  std::cout << "  Amplitude:\t" << f_gaussian->GetParameter(0) << " ± "
+            << f_gaussian->GetParError(0) << std::endl;
+  std::cout << "  K* mass:\t" << f_gaussian->GetParameter(1) << " ± "
+            << f_gaussian->GetParError(1) << std::endl;
+  std::cout << "  K* width:\t" << f_gaussian->GetParameter(2) << " ± "
+            << f_gaussian->GetParError(2) << std::endl;
+  std::cout << "  \u03C7²:\t\t" << f_gaussian->GetChisquare() << std::endl;
+  std::cout << "  NDF:\t\t" << f_gaussian->GetNDF() << std::endl;
+  std::cout << "  \u03C7²/NDF:\t"
+            << f_gaussian->GetChisquare() / f_gaussian->GetNDF() << std::endl;
+  std::cout << "  Probability:\t" << f_gaussian->GetProb() << std::endl;
+  std::cout << '\n';
+
+  canvas2->cd();
+  hInvariantMassSub1->Draw("HIST");
+  hInvariantMassSub2->Draw("HIST SAME");
+  hMassKStarDecay->Draw("HIST SAME");
+
+  while (gROOT->GetListOfCanvases()->FindObject("c1")
+         && gROOT->GetListOfCanvases()->FindObject("c2")) {
     gSystem->ProcessEvents(); // Process any events (including canvas events)
     gSystem->Sleep(100);      // Add a small delay to prevent 100% CPU usage
   }
